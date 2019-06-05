@@ -1,0 +1,8 @@
+@import 'components/base';
+@import 'components/urlbar';
+
+.app {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}

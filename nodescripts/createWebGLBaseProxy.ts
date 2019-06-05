@@ -1,0 +1,209 @@
+import webidl2 = require('webidl2');
+import path = require('path');
+import fetch = require('node-fetch');
+import fs = require('fs');
+import prettier = require('prettier');
+
+async function getIDLText(url: string) {
+  console.log(`fetching idl...`);
+  const response = await fetch(url);
+  return await response.text();
+}
+
+const typeDefMapping = {
+  'unsigned long': 'number',
+  boolean: 'boolean',
+  byte: 'number',
+  short: 'number',
+  long: 'number',
+  'long long': 'number',
+  octet: 'number',
+  'unsigned short': 'number',
+  'unrestricted float': 'number',
+  DOMString: 'string'
+};
+
+function convertTypedefs(rootType): string {
+  let tsType: string;
+  if (Array.isArray(rootType.idlType.idlType)) {
+    const subTypes = [];
+    for (const subtype of rootType.idlType.idlType) {
+      if (Array.isArray(subtype.idlType)) {
+        subTypes.push(subtype.idlType[0].idlType + '[]');
+      } else {
+        subTypes.push(subtype.idlType);
+      }
+    }
+    tsType = subTypes.join(' | ');
+  } else if (typeDefMapping[rootType.idlType.idlType]) {
+    tsType = typeDefMapping[rootType.idlType.idlType];
+  } else {
+    tsType = 'any';
+  }
+
+  return `
+  type ${rootType.name} =  ${tsType};`;
+}
+
+function convertEnums(rootType): string {
+  let enumValues = [];
+  for (const val of rootType.values) {
+    enumValues.push(`'${val.value}'`);
+  }
+
+  return `
+  enum ${rootType.name} {
+    ${enumValues.join(',\n')}
+  }`;
+}
+
+function convertDictionaries(rootType): string {
+  return convertInterface(rootType);
+  /*
+  let members = [];
+  for (const member of rootType.members) {
+    const optional = member.required === false ? '?' : '';
+    let memberType = typeDefMapping[member.idlType.idlType];
+    if (!memberType) {
+      memberType = member.idlType.idlType;
+    }
+    members.push(`${member.name}${optional}: ${memberType}`);
+  }
+
+  return ` interface ${rootType.name} {
+    ${members.join(';\n')}
+  }
+  `;
+  */
+}
+
+function convertInterface(rootType): string {
+  const extendsString = rootType.inheritance ? ` extends ${rootType.inheritance.name}` : '';
+
+  let members = [];
+  for (const member of rootType.members) {
+    const optional = member.required === false ? '?' : '';
+    let memberType = typeDefMapping[member.idlType.idlType];
+    if (!memberType) {
+      memberType = member.idlType.idlType;
+    }
+    members.push(`${member.name}${optional}: ${memberType};`);
+  }
+
+  return `interface ${rootType.name} ${extendsString} {
+    ${members.join('\n')}
+  };
+  `;
+}
+
+function convertInterfaceMixin(rootType): string {
+  const extendsString = rootType.inheritance ? ` extends ${rootType.inheritance.name}` : '';
+
+  let members = [];
+  for (const member of rootType.members) {
+    if (member.type === 'const') {
+      let memberType = typeDefMapping[member.idlType.idlType];
+      if (!memberType) {
+        memberType = member.idlType.idlType;
+      }
+      members.push(`readonly ${member.name}: ${memberType};`);
+    } else if (member.type === 'operation') {
+      const returnType = member.body.idlType.idlType;
+      let returnString = '';
+      if (Array.isArray(returnType)) {
+        returnString = typeDefMapping[returnType[0].idlType] + '[]';
+      } else {
+        returnString = typeDefMapping[returnType];
+      }
+      members.push(`${member.name}(): ${returnString};`);
+    } else if (member.type === 'attribute') {
+      members.push(`${member.readonly ? 'readonly' : ''} ${member.name}`);
+    } else {
+      members.push(`${member.name} ???`);
+    }
+  }
+
+  return `interface ${rootType.name} ${extendsString} {
+    ${members.join('\n')}
+  };
+  `;
+}
+
+async function _main() {
+  // 1st arg = ts-node cli
+  // 2nd arg = this script itself
+  if (process.argv.length !== 5) {
+    console.error(`usage: ${path.basename(__filename)} URL_TO_IDL output_path classname`);
+    process.exit(-1);
+  }
+
+  const className = process.argv[4];
+  const outputFile = path.join(process.argv[3], `${className}.ts`);
+  const idlText = await getIDLText(process.argv[2]);
+  //console.log(idlText);
+
+  const rootTypes = webidl2.parse(idlText);
+
+  //console.log(rootTypes);
+
+  const typedefs = [];
+  const enums = [];
+  const dictionaries = [];
+  const interfaces = [];
+  const interfaceMixins = [];
+
+  for (const rootType of rootTypes) {
+    if (rootType.type === 'typedef') {
+      typedefs.push(convertTypedefs(rootType));
+    }
+    if (rootType.type === 'enum') {
+      enums.push(convertEnums(rootType));
+    }
+    if (rootType.type === 'dictionary') {
+      dictionaries.push(convertDictionaries(rootType));
+    }
+    if (rootType.type === 'interface') {
+      interfaces.push(convertInterface(rootType));
+    }
+    if (rootType.type === 'interface mixin') {
+      interfaceMixins.push(convertInterfaceMixin(rootType));
+    }
+  }
+
+  let fileContent = `
+  // This file will be automatically generated
+  // do not edit this file
+
+  ${typedefs.join('')}
+
+  ${enums.join('')}
+
+  ${dictionaries.join('')}
+
+  ${interfaces.join('')}
+
+  ${interfaceMixins.join('')}
+
+  export class ${className} {
+    private _ctx: WebGLRenderingContext;
+
+    constructor(originalContext: WebGLRenderingContext) {
+      this._ctx = originalContext;
+    }  
+  }
+  `;
+
+  const prettierOptions = await prettier.resolveConfig('./.prettierrc');
+  prettierOptions.parser = 'typescript';
+  fileContent = prettier.format(fileContent, prettierOptions);
+
+  fs.writeFile(outputFile, fileContent, (err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log(`Successfully written to: ${outputFile}`);
+    }
+  });
+}
+
+_main();

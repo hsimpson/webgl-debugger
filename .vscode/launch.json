@@ -1,0 +1,48 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "webglProxy",
+      "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "./nodescripts/createWebGLBaseProxy.ts",
+        "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl",
+        "./src/preload",
+        "WebGLProxyBase"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Gulp debugging",
+      "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+      "cwd": "${workspaceRoot}",
+      "args": []
+    },
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "trace": "all",
+      "protocol": "inspector",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+      },
+      //"outputCapture": "std",
+      //"program": "${workspaceRoot}/src/main/main.ts",
+      "program": "${workspaceRoot}/dist/main.js",
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
+      //"runtimeArgs": ["--enable-logging", "--remote-debugging-port=9222"],
+      "sourceMaps": true
+      //"args": ["${workspaceRoot}/dist/main.js"]
+    }
+  ]
+}

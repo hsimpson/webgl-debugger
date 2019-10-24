@@ -1,22 +1,23 @@
-/* eslint-disable no-console */
-'use stric';
-const { ipcRenderer, remote } = require('electron');
+import { ipcRenderer, remote } from 'electron';
 
-console.log('this is the preload script');
+console.log('this is the preload script transpiled from TS');
 
 const sharedObject = remote.getGlobal('sharedConfiguration');
+let count = 0;
 
-function proxyFunc(funcName, args) {
+function proxyFunc(funcName, args, returnValue): void {
   //console.log(`WebGL function called: ${funcName}`);
   if (sharedObject.traceWebGLFunctions) {
-    ipcRenderer.send('webgl-func', {
+    ipcRenderer.send('WebGLFunc', {
       funcName,
-      args
+      args,
+      returnValue,
+      count: count++,
     });
   }
 }
 
-function createWebGLProxy(obj, contextId) {
+function createWebGLProxy(obj, contextId): void {
   let propNames;
   if (contextId === 'webgl' || contextId === 'experimental-webgl') {
     propNames = Object.getOwnPropertyNames(WebGLRenderingContext.prototype);
@@ -26,10 +27,10 @@ function createWebGLProxy(obj, contextId) {
   for (const propName of propNames) {
     const prop = obj[propName];
     if (Object.prototype.toString.call(prop) === '[object Function]') {
-      obj[propName] = (function(fname) {
-        return function() {
-          const returnValue = prop.apply(this, arguments);
-          proxyFunc.call(this, fname, arguments, returnValue);
+      obj[propName] = (function(funcName) {
+        return function(...args) {
+          const returnValue = prop.apply(this, args);
+          proxyFunc.call(this, funcName, args, returnValue);
           return returnValue;
         };
       })(propName);
@@ -40,7 +41,8 @@ function createWebGLProxy(obj, contextId) {
 // save original getContext
 const originalGetContext = HTMLCanvasElement.prototype.getContext;
 
-function injected_getConext(contextId, contextAttributes) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function injectedGetConext(contextId, contextAttributes): any {
   console.log(`contextId: ${contextId}`);
   console.log(`contextAttributes: ${contextAttributes}`);
 
@@ -53,4 +55,4 @@ function injected_getConext(contextId, contextAttributes) {
 }
 
 // replace the original getContext
-HTMLCanvasElement.prototype.getContext = injected_getConext;
+HTMLCanvasElement.prototype.getContext = injectedGetConext;

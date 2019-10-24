@@ -38,7 +38,7 @@
       },
       //"outputCapture": "std",
       //"program": "${workspaceRoot}/src/main/main.ts",
-      "program": "${workspaceRoot}/dist/main.js",
+      "program": "${workspaceRoot}/dist/app/main.js",
       "outFiles": ["${workspaceRoot}/dist/**/*.js"],
       //"runtimeArgs": ["--enable-logging", "--remote-debugging-port=9222"],
       "sourceMaps": true

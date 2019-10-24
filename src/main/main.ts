@@ -1,29 +1,30 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
+import { BrowserWindow, app, ipcMain } from 'electron';
+import { IPCChannel, IWebGLFunc } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 
 let mainWindow: Electron.BrowserWindow;
 const sharedConfiguration: ISharedConfiguration = {
-  traceWebGLFunctions: true
+  traceWebGLFunctions: true,
 };
 
 global['sharedConfiguration'] = sharedConfiguration;
 
-function createWindow() {
+function createWindow(): void {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   // open maximized
   mainWindow.maximize();
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(path.join(app.getAppPath(), 'index.html'));
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -62,7 +63,8 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-ipcMain.on('webgl-func', (event, arg) => {
-  //console.log(arg);
-  mainWindow.webContents.send('webgl-func', arg);
+ipcMain.on(IPCChannel.WebGLFunc, (event, arg: IWebGLFunc) => {
+  setTimeout(() => {
+    mainWindow.webContents.send(IPCChannel.WebGLFunc, arg);
+  }, Math.ceil(Math.random() * 200));
 });

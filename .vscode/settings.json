@@ -1,21 +1,5 @@
 {
-  "clang-format.executable": "${workspaceRoot}/node_modules/.bin/clang-format",
-  "clang-format.language.javascript.enable": false,
-  "clang-format.language.typescript.enable": false,
-  "editor.formatOnSave": true,
-  "editor.tabSize": 2,
-  "files.associations": {
-    ".clang-format": "yaml",
-    ".htmlhintrc": "json",
-    ".prettierrc": "json",
-    ".stylelintrc": "json"
-  },
-  "typescript.tsdk": "node_modules\\typescript\\lib",
-  "files.exclude": {
-    "dist": true,
-    "node_modules": true
-  },
-  "[javascript]": {
+  "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
@@ -23,5 +7,37 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "clang-format.executable": "${workspaceRoot}/node_modules/.bin/clang-format",
+  "clang-format.language.javascript.enable": false,
+  "clang-format.language.typescript.enable": false,
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "editor.tabSize": 2,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    {
+      "autoFix": true,
+      "language": "typescript"
+    },
+    {
+      "autoFix": true,
+      "language": "typescriptreact"
+    }
+  ],
+  "files.associations": {
+    ".clang-format": "yaml",
+    ".htmlhintrc": "json",
+    ".prettierrc": "json",
+    ".sasslintrc": "json",
+    ".stylelintrc": "json"
+  },
+  "files.exclude": {
+    "dist": true,
+    "node_modules": true
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

@@ -1,19 +1,46 @@
 {
+  "parser": "@typescript-eslint/parser",
   "env": {
     "node": true,
     "browser": true,
     "es6": true
   },
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    //"plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  /*
   "parserOptions": {
-    "ecmaVersion": 8,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
+  */
   "rules": {
+    // note you must disable the base rule as it can report incorrect errors
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": false
+      }
+    ],
+    "@typescript-eslint/no-require-imports": "warn",
+    "@typescript-eslint/no-var-requires": "warn",
+    "@typescript-eslint/interface-name-prefix": ["warn", { "prefixWithI": "always" }],
+    "@typescript-eslint/no-parameter-properties": ["off"],
+    "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
+    "eqeqeq": "error",
     "indent": ["error", 2],
     "linebreak-style": ["error", "unix"],
-    "no-var": "error",
+    "no-warning-comments": "warn",
     "quotes": ["error", "single"],
-    "semi": "error"
+    "semi": "error",
+    "sort-imports": "warn"
   }
 }

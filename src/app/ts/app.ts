@@ -1,20 +1,10 @@
+import '../scss/app.scss';
+import * as path from 'path';
+import { IPCChannel, IWebGLFunc } from '../../shared/IPC';
+import { ipcRenderer, remote } from 'electron';
 import { ISharedConfiguration } from '../../shared/ISharedConfiguration';
-import { webContents } from 'electron';
 
-// this file needs to be a module otherwise 'declare global' does not work
-export {};
-
-declare global {
-  // tslint:disable-next-line: interface-name
-  interface Window {
-    require(string): any;
-  }
-}
-
-// nodeIntegration: true is needed in the main process, to have window.require available
-const electron = window.require('electron');
-const path = window.require('path');
-const sharedConfiguration = electron.remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
+const sharedConfiguration = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
 let webGLWindow;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,18 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
     urlInputEl.addEventListener('keyup', async (ev: KeyboardEvent) => {
       if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
         const url = urlInputEl.value;
-        //const preloadPath = `${path.join(path.dirname(__filename), 'app/preload/preload.js')}`;
-        // FIXME: this looks like it must be absoulute file path
-        //const appPath = path.dirname(electron.remote.app.getAppPath());
-        const preloadPath = `G:\\src\\webapps\\webgl-debugger\\dist\\app\\preload\\preload.js`;
-        //const preloadPath = path.join(appPath, '../app/preload/preload.js');
+        const appPath = path.resolve(remote.app.getAppPath());
+        const preloadPath = path.join(appPath, 'preload.js');
         console.log(`preloadPath: ${preloadPath}`);
-        webGLWindow = new electron.remote.BrowserWindow({
+        webGLWindow = new remote.BrowserWindow({
           width: 800,
           height: 600,
           webPreferences: {
-            preload: preloadPath
-          }
+            preload: preloadPath,
+          },
         });
 
         webGLWindow.maximize();
@@ -46,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await webGLWindow.loadURL(url);
 
         if (debugInfoEl) {
-          const thisPid = electron.remote.getCurrentWebContents().getOSProcessId();
+          const thisPid = remote.getCurrentWebContents().getOSProcessId();
           const webGLWindowPid = webGLWindow.webContents.getOSProcessId();
           debugInfoEl.innerHTML = `Main Window PID: ${thisPid}<br>WebGL Window PID: ${webGLWindowPid}`;
         }
@@ -57,12 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (traceCheckBoxEl) {
     traceCheckBoxEl.checked = sharedConfiguration.traceWebGLFunctions;
-    traceCheckBoxEl.addEventListener('change', (ev: Event) => {
+    traceCheckBoxEl.addEventListener('change', (/*ev: Event*/) => {
       sharedConfiguration.traceWebGLFunctions = traceCheckBoxEl.checked;
     });
   }
 
-  electron.ipcRenderer.on('webgl-func', (event, arg) => {
+  ipcRenderer.on(IPCChannel.WebGLFunc, (event, arg: IWebGLFunc) => {
     console.log(arg);
   });
 });

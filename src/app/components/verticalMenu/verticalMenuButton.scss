@@ -1,0 +1,33 @@
+@import '../../themedark';
+@import '../../themelight';
+
+.VerticalMenuButton {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+}
+
+body.theme--dark {
+  .VerticalMenuButton {
+    &.active {
+      border-left-color: $icon-color-hover-dark;
+      .fa-custom-style {
+        color: $icon-color-hover-dark;
+      }
+    }
+  }
+}
+
+body.theme--light {
+  .VerticalMenuButton {
+    &.active {
+      border-left-color: $icon-color-hover-light;
+      .fa-custom-style {
+        color: $icon-color-hover-light;
+      }
+    }
+  }
+}

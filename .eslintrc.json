@@ -1,5 +1,6 @@
 {
   "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "env": {
     "node": true,
     "browser": true,
@@ -10,6 +11,7 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     //"plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:react/recommended",
     "prettier",
     "prettier/@typescript-eslint"
   ],
@@ -35,6 +37,8 @@
     "@typescript-eslint/interface-name-prefix": ["warn", { "prefixWithI": "always" }],
     "@typescript-eslint/no-parameter-properties": ["off"],
     "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
+    "@typescript-eslint/explicit-member-accessibility": ["error", { "accessibility": "explicit" }],
+    //"@typescript-eslint/explicit-member-accessibility": ["error"],
     "eqeqeq": "error",
     "indent": ["error", 2],
     "linebreak-style": ["error", "unix"],
@@ -42,5 +46,8 @@
     "quotes": ["error", "single"],
     "semi": "error",
     "sort-imports": "warn"
+  },
+  "settings": {
+    "react": { "version": "detect" }
   }
 }

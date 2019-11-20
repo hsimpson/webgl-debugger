@@ -1,7 +1,8 @@
 import * as path from 'path';
-import { BrowserWindow, app, ipcMain } from 'electron';
+import { BrowserWindow, Menu, app, ipcMain } from 'electron';
 import { IPCChannel, IWebGLFunc } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
+//import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 let mainWindow: Electron.BrowserWindow;
 const sharedConfiguration: ISharedConfiguration = {
@@ -10,21 +11,32 @@ const sharedConfiguration: ISharedConfiguration = {
 
 global['sharedConfiguration'] = sharedConfiguration;
 
-function createWindow(): void {
+async function createWindow(): Promise<void> {
   // Create the browser window.
+  const appPath = path.resolve(app.getAppPath());
+  const preloadPath = path.join(appPath, 'preloadapp.js');
+  console.log(`preloadPath: ${preloadPath}`);
   mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
     webPreferences: {
       nodeIntegration: true,
+      preload: preloadPath,
     },
   });
+
+  // remove main menu
+  Menu.setApplicationMenu(null);
 
   // open maximized
   mainWindow.maximize();
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(app.getAppPath(), 'index.html'));
+  //await installExtension(REACT_DEVELOPER_TOOLS);
+  /*
+  BrowserWindow.addDevToolsExtension(
+    'C:\\Users\\daniel\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\fmkadmapgofadopljbjfkapdkoienihi\\4.2.0_0'
+  );
+  */
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -36,8 +48,12 @@ function createWindow(): void {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  // and load the index.html of the app.
+  return mainWindow.loadFile(path.join(app.getAppPath(), '../index.html'));
 }
 
+app.removeAllListeners('ready'); // workaround for https://github.com/electron/electron/issues/19468
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

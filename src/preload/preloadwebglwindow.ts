@@ -1,19 +1,35 @@
 import { ipcRenderer, remote } from 'electron';
+import { IWebGLFunc } from '../shared/IPC';
 
 console.log('this is the preload script transpiled from TS');
 
 const sharedObject = remote.getGlobal('sharedConfiguration');
 let count = 0;
 
+let tagcount = 0;
+
 function proxyFunc(funcName, args, returnValue): void {
   //console.log(`WebGL function called: ${funcName}`);
   if (sharedObject.traceWebGLFunctions) {
-    ipcRenderer.send('WebGLFunc', {
-      funcName,
+    const funcObject: IWebGLFunc = {
+      name: funcName,
       args,
       returnValue,
       count: count++,
-    });
+    };
+
+    if (returnValue && returnValue instanceof Object) {
+      // check if it has already a tag
+      funcObject.tag = {
+        name: returnValue[Symbol.toStringTag],
+        id: tagcount++, // TODO: handle WebGLObject resource ID's
+      };
+
+      // augment the WebGLObject
+      returnValue.tag = funcObject.tag;
+    }
+
+    ipcRenderer.send('WebGLFunc', funcObject);
   }
 }
 

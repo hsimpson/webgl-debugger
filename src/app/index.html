@@ -3,25 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
-    <title>Document</title>
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'" />-->
+    <title>WebGL-Debugger</title>
 
-    <link rel="stylesheet" href="../css/app.css" />
-
-    <script src="./renderer.js"></script>
+    <link rel="stylesheet" href="./css/app.css" />
   </head>
 
   <body>
-    <div class="app">
-      <div class="urlbar">
-        <label for="urlinput">Url:</label>
-        <input type="text" id="urlinput" />
+    <div id="root"></div>
+    <!--
+      <div class="app">
+        <div class="urlbar">
+          <label for="urlinput">Url:</label>
+          <input type="text" id="urlinput" />
+        </div>
+        <div>
+          <label for="traceWebGLFunctions">TraceWebGLFunctions:</label>
+          <input type="checkbox" id="traceWebGLFunctions" name="traceWebGLFunctions" />
+        </div>
+        <div id="debuginfo">PID: 0</div>
       </div>
-      <div>
-        <label for="traceWebGLFunctions">TraceWebGLFunctions:</label>
-        <input type="checkbox" id="traceWebGLFunctions" name="traceWebGLFunctions" />
-      </div>
-      <div id="debuginfo">PID: 0</div>
-    </div>
+    -->
+    <script src="./app/renderer.js"></script>
   </body>
 </html>

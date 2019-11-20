@@ -21,13 +21,13 @@ const commonConfig: webpack.Configuration = {
   },
 
   resolve: {
-    extensions: ['.tsx', '.ts'],
+    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'], // order is important here!!!
   },
 };
 
 const electronMainConfig: webpack.Configuration = {
   name: 'electronMainConfig',
-  entry: './src/main/main.ts',
+  entry: './src/mainprocess/mainprocess.ts',
   target: 'electron-main',
   output: {
     filename: 'app/main.js',
@@ -38,8 +38,9 @@ const electronMainConfig: webpack.Configuration = {
 const electronRendererConfig: webpack.Configuration = {
   name: 'electronRendererConfig',
   entry: {
-    renderer: './src/app/ts/app.ts',
-    preload: './src/preload/preload.ts',
+    renderer: './src/app/index.tsx',
+    preloadapp: './src/preload/preloadapp.ts',
+    preloadwebglwindow: './src/preload/preloadwebglwindow.ts',
   },
   target: 'electron-renderer',
   output: {
@@ -48,13 +49,26 @@ const electronRendererConfig: webpack.Configuration = {
   module: {
     rules: [
       {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        loader: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/',
+              publicPath: (url) => '../fonts/' + url,
+            },
+          },
+        ],
+      },
+      {
         test: /\.(sa|sc|c)ss$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
     ],
   },
   plugins: [
-    new CopyWebpackPlugin([{ from: 'src/app/index.html', to: 'app' }]),
+    new CopyWebpackPlugin([{ from: 'src/app/index.html', to: '.' }]),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional

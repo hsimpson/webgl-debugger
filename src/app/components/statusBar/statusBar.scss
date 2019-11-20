@@ -1,0 +1,16 @@
+.StatusBar {
+  display: flex;
+  flex-direction: row;
+  height: 22px;
+  background-color: #007acc;
+  color: #ffffff;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 12px;
+}
+
+.StatusBarItem {
+  padding-left: 5px;
+  padding-right: 5px;
+}

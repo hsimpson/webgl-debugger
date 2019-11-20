@@ -1,0 +1,20 @@
+@import '../../themedark';
+@import '../../themelight';
+
+.VerticalMenu {
+  display: flex;
+  width: 56px;
+  flex-direction: column;
+}
+
+body.theme--dark {
+  .VerticalMenu {
+    background: $background-vertical-menu-dark;
+  }
+}
+
+body.theme--light {
+  .VerticalMenu {
+    background: $background-vertical-menu-light;
+  }
+}

@@ -1,11 +1,40 @@
-import '../scss/app.scss';
+/*
+import './scss/app.scss';
 import * as path from 'path';
-import { IPCChannel, IWebGLFunc } from '../../shared/IPC';
-import { ipcRenderer, remote } from 'electron';
-import { ISharedConfiguration } from '../../shared/ISharedConfiguration';
+import { BrowserWindow, ipcRenderer, remote } from 'electron';
+import { IPCChannel, IWebGLFunc } from '../shared/IPC';
+import { ISharedConfiguration } from '../shared/ISharedConfiguration';
+*/
 
+import './index.scss';
+import { faCogs, faRocket } from '@fortawesome/free-solid-svg-icons';
+import { Main } from './components/main/main';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+
+window.__setTheme = () => {
+  const theme = window.localStorage.user_theme || window.localStorage.os_theme || 'dark';
+
+  if (theme === 'dark') {
+    document.body.classList.remove('theme--light');
+    document.body.classList.add('theme--dark');
+  } else {
+    document.body.classList.remove('theme--dark');
+    document.body.classList.add('theme--light');
+  }
+};
+window.__setTheme();
+
+// this is used to add all from FA
+library.add(faCogs, faRocket, faQuestionCircle);
+
+ReactDOM.render(<Main />, document.getElementById('root'));
+
+/*
 const sharedConfiguration = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
-let webGLWindow;
+let webGLWindow: BrowserWindow;
 
 document.addEventListener('DOMContentLoaded', () => {
   const urlInputEl = document.getElementById('urlinput') as HTMLInputElement;
@@ -18,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
         const url = urlInputEl.value;
         const appPath = path.resolve(remote.app.getAppPath());
-        const preloadPath = path.join(appPath, 'preload.js');
+        const preloadPath = path.join(appPath, 'preloadwebglwindow.js');
         console.log(`preloadPath: ${preloadPath}`);
         webGLWindow = new remote.BrowserWindow({
           width: 800,
@@ -30,6 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         webGLWindow.maximize();
         webGLWindow.webContents.openDevTools();
+        console.log(url);
+
+        // just wait a bit ;-)
+        //syncWait(3000);
         await webGLWindow.loadURL(url);
 
         if (debugInfoEl) {
@@ -37,19 +70,21 @@ document.addEventListener('DOMContentLoaded', () => {
           const webGLWindowPid = webGLWindow.webContents.getOSProcessId();
           debugInfoEl.innerHTML = `Main Window PID: ${thisPid}<br>WebGL Window PID: ${webGLWindowPid}`;
         }
-        console.log(url);
       }
     });
   }
 
   if (traceCheckBoxEl) {
     traceCheckBoxEl.checked = sharedConfiguration.traceWebGLFunctions;
-    traceCheckBoxEl.addEventListener('change', (/*ev: Event*/) => {
+    traceCheckBoxEl.addEventListener('change', () => {
       sharedConfiguration.traceWebGLFunctions = traceCheckBoxEl.checked;
     });
   }
 
   ipcRenderer.on(IPCChannel.WebGLFunc, (event, arg: IWebGLFunc) => {
-    console.log(arg);
+    if (arg.count < 100) {
+      console.log(arg);
+    }
   });
 });
+*/

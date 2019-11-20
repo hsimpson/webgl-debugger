@@ -4,6 +4,8 @@
     "module": "commonjs",
     "sourceMap": true,
     "target": "es5",
-    "moduleResolution": "node"
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "jsx": "react"
   }
 }

@@ -1,0 +1,11 @@
+.Main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.MainArea {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}

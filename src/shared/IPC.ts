@@ -1,5 +1,10 @@
 export enum IPCChannel {
-  WebGLFunc = 'WebGLFunc'
+  WebGLFunc = 'WebGLFunc',
+}
+
+export interface IWebGLTag {
+  name: string;
+  id: number;
 }
 
 export interface IWebGLFunc {
@@ -7,4 +12,5 @@ export interface IWebGLFunc {
   args: any[];
   returnValue: any;
   count: number;
+  tag?: IWebGLTag;
 }

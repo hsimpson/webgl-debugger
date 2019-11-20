@@ -1,0 +1,44 @@
+@import 'fonts';
+@import 'themedark';
+@import 'themelight';
+
+html,
+body {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  font-family: 'Roboto';
+  font-size: 14px;
+}
+
+body.theme--dark {
+  background: $background-main-dark;
+  .fa-custom-style {
+    color: $icon-color-dark;
+    &:hover {
+      color: $icon-color-hover-dark;
+    }
+  }
+}
+
+body.theme--light {
+  background: $background-main-light;
+  .fa-custom-style {
+    color: $icon-color-light;
+    &:hover {
+      color: $icon-color-hover-light;
+    }
+  }
+}
+
+// sass-lint:disable no-ids
+#root {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+// sass-lint:enable no-ids

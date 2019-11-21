@@ -17,6 +17,7 @@ body {
 
 body.theme--dark {
   background: $background-main-dark;
+  color: $font-color-dark;
   .fa-custom-style {
     color: $icon-color-dark;
     &:hover {
@@ -27,6 +28,7 @@ body.theme--dark {
 
 body.theme--light {
   background: $background-main-light;
+  color: $font-color-light;
   .fa-custom-style {
     color: $icon-color-light;
     &:hover {

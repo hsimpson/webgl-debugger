@@ -44,8 +44,8 @@
     "linebreak-style": ["error", "unix"],
     "no-warning-comments": "warn",
     "quotes": ["error", "single"],
-    "semi": "error",
-    "sort-imports": "warn"
+    "semi": ["error", "always"]
+    //"sort-imports": "warn"
   },
   "settings": {
     "react": { "version": "detect" }

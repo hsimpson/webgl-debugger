@@ -13,12 +13,6 @@ export interface IVerticalMenuButtonProps {
 type IVerticalMenuButtonState = IVerticalMenuButtonProps;
 
 export class VerticalMenuButton extends React.Component<IVerticalMenuButtonProps, IVerticalMenuButtonState> {
-  /*
-  private getClassNames(): string {
-    return  cla
-  }
-  */
-
   public render(): React.ReactNode {
     return (
       <div

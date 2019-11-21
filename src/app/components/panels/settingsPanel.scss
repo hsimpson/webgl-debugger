@@ -1,0 +1,5 @@
+@import './panels';
+
+.SettingsPanel {
+  @include panel;
+}

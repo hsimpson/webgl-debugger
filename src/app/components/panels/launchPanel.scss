@@ -1,0 +1,5 @@
+@import './panels';
+
+.LaunchPanel {
+  @include panel;
+}

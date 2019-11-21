@@ -1,0 +1,5 @@
+@import './panels';
+
+.HelpPanel {
+  @include panel;
+}

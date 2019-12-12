@@ -7,16 +7,20 @@ import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 */
 
 import './index.scss';
-import { faCogs, faRocket } from '@fortawesome/free-solid-svg-icons';
-import { Main } from './components/main/main';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { faCogs, faRocket } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+
+import { Main } from './components/main/main';
+
+// this is used to add all from FA
+library.add(faCogs, faRocket, faQuestionCircle);
 
 window.__setTheme = () => {
-  const theme = window.localStorage.user_theme || window.localStorage.os_theme || 'dark';
-
+  const theme = window.localStorage.userTheme ?? window.localStorage.osTheme ?? 'dark';
   if (theme === 'dark') {
     document.body.classList.remove('theme--light');
     document.body.classList.add('theme--dark');
@@ -24,13 +28,9 @@ window.__setTheme = () => {
     document.body.classList.remove('theme--dark');
     document.body.classList.add('theme--light');
   }
+  ReactDOM.render(<Main theme={theme} />, document.getElementById('root'));
 };
 window.__setTheme();
-
-// this is used to add all from FA
-library.add(faCogs, faRocket, faQuestionCircle);
-
-ReactDOM.render(<Main />, document.getElementById('root'));
 
 /*
 const sharedConfiguration = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;

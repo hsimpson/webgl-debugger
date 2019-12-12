@@ -11,6 +11,6 @@ export interface IWebGLFunc {
   name: string;
   args: any[];
   returnValue: any;
-  count: number;
+  id: number;
   tag?: IWebGLTag;
 }

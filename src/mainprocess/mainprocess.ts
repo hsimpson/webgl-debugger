@@ -1,17 +1,17 @@
 import * as path from 'path';
-import { BrowserWindow, Menu, app, ipcMain } from 'electron';
-import { IPCChannel, IWebGLFunc } from '../shared/IPC';
+import { BrowserWindow, Menu, app } from 'electron';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 let mainWindow: Electron.BrowserWindow;
-const sharedConfiguration: ISharedConfiguration = {
-  traceWebGLFunctions: true,
-};
-
-global['sharedConfiguration'] = sharedConfiguration;
 
 async function createWindow(): Promise<void> {
+  /*
+  await app.whenReady();
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+  */
   // Create the browser window.
   const appPath = path.resolve(app.getAppPath());
   const preloadPath = path.join(appPath, 'preloadapp.js');
@@ -25,13 +25,26 @@ async function createWindow(): Promise<void> {
     },
   });
 
+  const sharedConfiguration: ISharedConfiguration = {
+    traceWebGLFunctions: true,
+    appWindowId: mainWindow.id,
+  };
+
+  global['sharedConfiguration'] = sharedConfiguration;
+
   // remove main menu
   Menu.setApplicationMenu(null);
 
   // open maximized
   mainWindow.maximize();
 
+  /*
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+  */
   //await installExtension(REACT_DEVELOPER_TOOLS);
+
   /*
   BrowserWindow.addDevToolsExtension(
     'C:\\Users\\daniel\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\fmkadmapgofadopljbjfkapdkoienihi\\4.2.0_0'
@@ -79,8 +92,12 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
+/*
 ipcMain.on(IPCChannel.WebGLFunc, (event, arg: IWebGLFunc) => {
-  setTimeout(() => {
-    mainWindow.webContents.send(IPCChannel.WebGLFunc, arg);
-  }, Math.ceil(Math.random() * 200));
+  //setTimeout(() => {
+  //mainWindow.webContents.send(IPCChannel.WebGLFunc, arg);
+  //}, Math.ceil(Math.random() * 200));
+  console.log(`WebGL call #${arg.id}: ${arg.name}`);
+  mainWindow.webContents.send(IPCChannel.WebGLFunc, arg);
 });
+*/

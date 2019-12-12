@@ -1,12 +1,14 @@
 import { ipcRenderer, remote } from 'electron';
-import { IWebGLFunc } from '../shared/IPC';
+import { IPCChannel, IWebGLFunc } from '../shared/IPC';
+import { ISharedConfiguration } from '../shared/ISharedConfiguration';
+
+const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
 
 console.log('this is the preload script transpiled from TS');
+console.log(`Id of the electron appclication window: ${sharedObject.appWindowId}`);
 
-const sharedObject = remote.getGlobal('sharedConfiguration');
-let count = 0;
-
-let tagcount = 0;
+let funcId = 0;
+let tagId = 0;
 
 function proxyFunc(funcName, args, returnValue): void {
   //console.log(`WebGL function called: ${funcName}`);
@@ -15,25 +17,30 @@ function proxyFunc(funcName, args, returnValue): void {
       name: funcName,
       args,
       returnValue,
-      count: count++,
+      id: funcId++,
     };
 
     if (returnValue && returnValue instanceof Object) {
       // check if it has already a tag
       funcObject.tag = {
         name: returnValue[Symbol.toStringTag],
-        id: tagcount++, // TODO: handle WebGLObject resource ID's
+        id: tagId++,
       };
 
       // augment the WebGLObject
       returnValue.tag = funcObject.tag;
     }
 
-    ipcRenderer.send('WebGLFunc', funcObject);
+    // only send the first GL calls
+    if (funcObject.id < 100) {
+      //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`);
+      //ipcRenderer.send(IPCChannel.WebGLFunc, funcObject);
+      ipcRenderer.sendTo(sharedObject.appWindowId, IPCChannel.WebGLFunc, funcObject);
+    }
   }
 }
 
-function createWebGLProxy(obj, contextId): void {
+function createWebGLProxy(obj, contextId: string): void {
   let propNames;
   if (contextId === 'webgl' || contextId === 'experimental-webgl') {
     propNames = Object.getOwnPropertyNames(WebGLRenderingContext.prototype);
@@ -58,7 +65,7 @@ function createWebGLProxy(obj, contextId): void {
 const originalGetContext = HTMLCanvasElement.prototype.getContext;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function injectedGetConext(contextId, contextAttributes): any {
+function injectedGetConext(contextId: string, contextAttributes): any {
   console.log(`contextId: ${contextId}`);
   console.log(`contextAttributes: ${contextAttributes}`);
 

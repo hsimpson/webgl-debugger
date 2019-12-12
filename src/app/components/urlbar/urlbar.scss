@@ -1,7 +1,4 @@
-.urlbar {
+.UrlBar {
   display: flex;
-
-  #urlinput {
-    flex-grow: 1;
-  }
+  flex-direction: row;
 }

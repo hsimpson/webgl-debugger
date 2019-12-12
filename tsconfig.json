@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+    "downlevelIteration": true,
     "esModuleInterop": true,
+    "jsx": "react",
     "module": "commonjs",
-    "sourceMap": true,
-    "target": "es5",
-    "resolveJsonModule": true,
     "moduleResolution": "node",
-    "jsx": "react"
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "target": "ES2019"
   }
 }

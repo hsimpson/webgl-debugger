@@ -2,10 +2,7 @@ import React from 'react';
 
 import { Themes } from '../../themes';
 
-import { WelcomePanel } from '../panels/welcomePanel';
-import { LaunchPanel } from '../panels/launchPanel';
-import { SettingsPanel } from '../panels/settingsPanel';
-import { HelpPanel } from '../panels/helpPanel';
+import { WelcomePanel, LaunchPanel, ShadersPanel, SettingsPanel, HelpPanel } from '../panels';
 
 import { StatusBar } from '../statusBar/statusBar';
 import { VerticalMenu } from '../verticalMenu/verticalMenu';
@@ -28,9 +25,12 @@ interface IMainState {
 export class Main extends React.Component<IMainProps, IMainState> {
   public readonly state: IMainState = {
     activePanel: 'welcome',
+
+    // FIXME: this is a loose coupling
     panels: {
       welcome: WelcomePanel,
       launch: LaunchPanel,
+      shaders: ShadersPanel,
       settings: SettingsPanel,
       help: HelpPanel,
     },

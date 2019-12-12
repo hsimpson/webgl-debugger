@@ -1,9 +1,10 @@
-import './launchPanel.scss';
+import './launch.scss';
 import React from 'react';
 import { UrlBar } from '../urlbar/urlbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from '@material-ui/core';
 import { launchWebGLWindow } from '../../services/launchWebGLWindow';
+import { PanelTitle } from './panelTitle';
 
 interface ILaunchPanelState {
   launchUrl: string;
@@ -38,15 +39,18 @@ export class LaunchPanel extends React.Component<{}, ILaunchPanelState> {
   public render(): React.ReactNode {
     return (
       <div className="LaunchPanel">
-        <UrlBar url={this.state.launchUrl} onChange={this.handleUrlChange} />
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={this.state.launchDisabled}
-          startIcon={<FontAwesomeIcon icon="rocket"></FontAwesomeIcon>}
-          onClick={this.handleLaunch}>
-          Launch
-        </Button>
+        <PanelTitle title="Launch WebGL site"></PanelTitle>
+        <div className="panelContainer">
+          <UrlBar url={this.state.launchUrl} onChange={this.handleUrlChange} />
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={this.state.launchDisabled}
+            startIcon={<FontAwesomeIcon icon="rocket"></FontAwesomeIcon>}
+            onClick={this.handleLaunch}>
+            Launch
+          </Button>
+        </div>
       </div>
     );
   }

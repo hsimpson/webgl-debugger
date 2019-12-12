@@ -1,6 +1,6 @@
-import './settingsPanel.scss';
+import './settings.scss';
 import React from 'react';
-
+import { PanelTitle } from './panelTitle';
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 
 type ThemeTypes = 'dark' | 'light' | 'system';
@@ -27,18 +27,21 @@ export class SettingsPanel extends React.Component<{}, ISettingsPanelState> {
   public render(): React.ReactNode {
     return (
       <div className="SettingsPanel">
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">Style</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={this.state.theme}
-            onChange={this.handleThemeChange}>
-            <MenuItem value={'dark'}>Dark</MenuItem>
-            <MenuItem value={'light'}>Light</MenuItem>
-            <MenuItem value={'system'}>System</MenuItem>
-          </Select>
-        </FormControl>
+        <PanelTitle title="Settings"></PanelTitle>
+        <div className="panelContainer">
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">Style</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={this.state.theme}
+              onChange={this.handleThemeChange}>
+              <MenuItem value={'dark'}>Dark</MenuItem>
+              <MenuItem value={'light'}>Light</MenuItem>
+              <MenuItem value={'system'}>System</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </div>
     );
   }

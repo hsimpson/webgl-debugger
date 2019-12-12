@@ -15,14 +15,22 @@ export class VerticalMenu extends React.Component<IVerticalMenuProps, IVerticalM
     buttons: [
       {
         name: 'launch',
+        title: 'Launch WebGL site',
         faIcon: 'rocket',
       },
       {
+        name: 'shaders',
+        title: 'Programs and Shaders',
+        faIcon: ['far', 'copy'], // use the prefix 'far' for the regular style icons
+      },
+      {
         name: 'settings',
+        title: 'Settings',
         faIcon: 'cogs',
       },
       {
         name: 'help',
+        title: 'Help',
         faIcon: ['far', 'question-circle'], // use the prefix 'far' for the regular style icons
       },
     ],
@@ -49,6 +57,7 @@ export class VerticalMenu extends React.Component<IVerticalMenuProps, IVerticalM
             <VerticalMenuButton
               key={button.name}
               name={button.name}
+              title={button.title}
               faIcon={button.faIcon}
               active={button.active}
               onClick={this.handleButtonClick}

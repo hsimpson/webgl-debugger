@@ -5,7 +5,7 @@ import { WGLRenderbuffer } from './wglRenderbuffer';
 import { WGLShader } from './wglShader';
 import { WGLTexture } from './wglTexture';
 import { WGLProgram } from './wglProgram';
-import { IWebGLFunc } from '../../../shared/IPC';
+import { IWebGLFunc, WebGLObjectType } from '../../../shared/IPC';
 
 export class WebGLObjectsManager {
   private static _instance: WebGLObjectsManager;
@@ -35,22 +35,22 @@ export class WebGLObjectsManager {
     let newObj: WGLObject;
 
     switch (func.tag.name) {
-      case 'WebGLBuffer':
+      case WebGLObjectType.WebGLBuffer:
         newObj = new WGLBuffer(func);
         break;
-      case 'WebGLFramebuffer':
+      case WebGLObjectType.WebGLFramebuffer:
         newObj = new WGLFramebuffer(func);
         break;
-      case 'WebGLProgram':
+      case WebGLObjectType.WebGLProgram:
         newObj = new WGLProgram(func);
         break;
-      case 'WebGLRenderbuffer':
+      case WebGLObjectType.WebGLRenderbuffer:
         newObj = new WGLRenderbuffer(func);
         break;
-      case 'WebGLShader':
+      case WebGLObjectType.WebGLShader:
         newObj = new WGLShader(func);
         break;
-      case 'WebGLTexture':
+      case WebGLObjectType.WebGLTexture:
         newObj = new WGLTexture(func);
         break;
       default:
@@ -65,5 +65,23 @@ export class WebGLObjectsManager {
 
   public getById(id: number): WGLObject | undefined {
     return this._objects.get(id);
+  }
+
+  public getByType(type: WebGLObjectType, sort = false): WGLObject[] {
+    const ret: WGLObject[] = [];
+    for (const v of this._objects.values()) {
+      if (v.name === type) {
+        ret.push(v);
+      }
+    }
+
+    if (sort) {
+      ret.sort((a, b) => {
+        if (a.id < b.id) return -1;
+        else return 1;
+      });
+    }
+
+    return ret;
   }
 }

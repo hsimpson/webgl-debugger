@@ -2,8 +2,17 @@ export enum IPCChannel {
   WebGLFunc = 'WebGLFunc',
 }
 
+export enum WebGLObjectType {
+  WebGLBuffer = 'WebGLBuffer',
+  WebGLFramebuffer = 'WebGLFramebuffer',
+  WebGLProgram = 'WebGLProgram',
+  WebGLRenderbuffer = 'WebGLRenderbuffer',
+  WebGLShader = 'WebGLShader',
+  WebGLTexture = 'WebGLTexture',
+}
+
 export interface IWebGLTag {
-  name: string;
+  name: WebGLObjectType;
   id: number;
 }
 

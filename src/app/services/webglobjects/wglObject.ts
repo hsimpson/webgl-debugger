@@ -1,12 +1,12 @@
-import { IWebGLTag, IWebGLFunc } from '../../../shared/IPC';
+import { IWebGLTag, IWebGLFunc, WebGLObjectType } from '../../../shared/IPC';
 
 export class WGLObject {
   private _id: number;
-  private _name: string;
+  private _name: WebGLObjectType;
 
   public constructor(func: IWebGLFunc) {
     this._id = func.tag.id;
-    this._name = func.name;
+    this._name = func.tag.name;
   }
 
   public get id(): number {

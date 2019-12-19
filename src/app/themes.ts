@@ -21,4 +21,8 @@ const Themes: IMuiThemes = {
   },
 };
 
-export { Themes };
+function getCurrentTheme(): 'dark' | 'light' {
+  return window.localStorage.userTheme ?? window.localStorage.osTheme ?? 'dark';
+}
+
+export { Themes, getCurrentTheme };

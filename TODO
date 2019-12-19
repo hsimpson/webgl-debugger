@@ -1,0 +1,11 @@
+
+Themes:
+  ☐ Global handling of theme change: e.g. when using it as a state in shader.tsx
+
+Shader Editor:
+  ☐ Improve syntax highlighting
+  ☐ Handle code change
+  ☐ Show diff when code has changed
+  ☐ Roll back to original code
+  ☐ Validate code
+

@@ -45,7 +45,7 @@ export async function launchWebGLWindow(
   //webGLWindow.on('closed', onClosed);
 
   //webGLWindow.maximize();
-  webGLWindow.webContents.openDevTools();
+  //webGLWindow.webContents.openDevTools();
   //console.log(url);
 
   return webGLWindow.loadURL(url);

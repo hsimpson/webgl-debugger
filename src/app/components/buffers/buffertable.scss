@@ -1,0 +1,36 @@
+@import '../../flexbox.scss';
+
+.BufferTableContainer {
+  @include fullSizeContainer;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.BufferTable {
+  table-layout: fixed;
+}
+
+.BufferTable thead th {
+  position: sticky;
+  top: 0;
+}
+
+.BufferTable thead th.x,
+th.r {
+  background-color: #ff7070;
+}
+
+.BufferTable thead th.y,
+th.g {
+  background-color: #70ff70;
+}
+
+.BufferTable thead th.z,
+th.b {
+  background-color: #7070ff;
+}
+
+.BufferTable tbody td {
+  text-align: left;
+}

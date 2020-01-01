@@ -1,13 +1,7 @@
 @import '../../flexbox.scss';
 
-.Main {
+.Buffers {
   @include fullSizeContainer;
   display: flex;
   flex-direction: column;
-}
-
-.MainArea {
-  @include fullSizeContainer;
-  display: flex;
-  flex-direction: row;
 }

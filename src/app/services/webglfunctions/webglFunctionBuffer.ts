@@ -1,19 +1,8 @@
 import { IWebGLFunc } from '../../../shared/IPC';
 
-export class WebGLFunctionBuffer {
-  private static _instance: WebGLFunctionBuffer;
+class WebGLFunctionBuffer {
   private _functions: Map<number, IWebGLFunc> = new Map<number, IWebGLFunc>();
   private _currentId = 0;
-
-  private constructor() {} // eslint-disable-line @typescript-eslint/no-empty-function
-
-  public static getInstance(): WebGLFunctionBuffer {
-    if (!WebGLFunctionBuffer._instance) {
-      WebGLFunctionBuffer._instance = new WebGLFunctionBuffer();
-    }
-
-    return WebGLFunctionBuffer._instance;
-  }
 
   public clear(): void {
     this._functions.clear();
@@ -42,3 +31,5 @@ export class WebGLFunctionBuffer {
     return this._functions.size > 0;
   }
 }
+
+export const WebGLFunctionBufferSingleton = new WebGLFunctionBuffer();

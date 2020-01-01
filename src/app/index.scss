@@ -1,15 +1,18 @@
-@import 'fonts';
-@import 'themedark';
-@import 'themelight';
+@import './fonts';
+@import './themedark';
+@import './themelight';
+@import './flexbox.scss';
 
 html {
   width: 100vw;
   height: 100vh;
 }
+
 body {
   display: flex;
   margin: 0;
   padding: 0;
+  flex-direction: row;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -42,8 +45,8 @@ body.theme--light {
 
 // sass-lint:disable no-ids
 #root {
+  @include fullSizeContainer;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
 }
 // sass-lint:enable no-ids

@@ -67,7 +67,19 @@ export const WGLShaderFunctions = [
   'shaderSource',
 ];
 
+export const WGLBufferFunctions = ['bindBuffer', 'bufferData', 'buferSubData'];
+
 export enum Constants {
-  VERTEX_SHADER = 35633,
-  FRAGMENT_SHADER = 35632,
+  FRAGMENT_SHADER = 0x8b30,
+  VERTEX_SHADER = 0x8b31,
+
+  /* Buffer Objects */
+  ARRAY_BUFFER = 0x8892,
+  ELEMENT_ARRAY_BUFFER = 0x8893,
+  ARRAY_BUFFER_BINDING = 0x8894,
+  ELEMENT_ARRAY_BUFFER_BINDING = 0x8895,
+
+  STREAM_DRAW = 0x88e0,
+  STATIC_DRAW = 0x88e4,
+  DYNAMIC_DRAW = 0x88e8,
 }

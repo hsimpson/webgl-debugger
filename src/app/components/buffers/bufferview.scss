@@ -1,13 +1,17 @@
 @import '../../flexbox.scss';
 
-.Main {
+.BufferView {
   @include fullSizeContainer;
   display: flex;
   flex-direction: column;
 }
 
-.MainArea {
+.BufferView-testcontainer {
   @include fullSizeContainer;
-  display: flex;
-  flex-direction: row;
+  overflow-y: auto;
+}
+
+.BufferView-test {
+  font-size: 24px;
+  padding: 10px;
 }

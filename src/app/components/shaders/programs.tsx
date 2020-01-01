@@ -1,5 +1,5 @@
 import React from 'react';
-import { WebGLObjectsManager } from '../../services/webglobjects/webglObjectsManager';
+import { WebGLObjectsManagerSingleton } from '../../services/webglobjects/webglObjectsManager';
 import { WGLProgram } from '../../services/webglobjects/wglProgram';
 import { WGLShader } from '../../services/webglobjects/WGLShader';
 import { WebGLObjectType } from '../../../shared/IPC';
@@ -11,20 +11,20 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { Shader } from './shader';
 
 interface IProgramsState {
-  currentShader: WGLShader;
+  selectedShader: WGLShader;
 }
 
 export class Programs extends React.Component<{}, IProgramsState> {
   public readonly state: IProgramsState = {
-    currentShader: undefined,
+    selectedShader: undefined,
   };
 
-  private handleShaderClick = (shader: WGLShader): void => {
-    this.setState({ currentShader: shader });
+  private _handleShaderClick = (selectedShader: WGLShader): void => {
+    this.setState({ selectedShader });
   };
 
   public render(): React.ReactNode {
-    const programs: WGLProgram[] = WebGLObjectsManager.getInstance().getByType(
+    const programs: WGLProgram[] = WebGLObjectsManagerSingleton.getByType(
       WebGLObjectType.WebGLProgram,
       true
     ) as WGLProgram[];
@@ -41,14 +41,14 @@ export class Programs extends React.Component<{}, IProgramsState> {
                       key={shader.id}
                       nodeId={`${shader.id}`}
                       label={`${shader.typeString} shader #${shader.id}`}
-                      onClick={() => this.handleShaderClick(shader)}></TreeItem>
+                      onClick={() => this._handleShaderClick(shader)}></TreeItem>
                   );
                 })}
               </TreeItem>
             );
           })}
         </TreeView>
-        <Shader shader={this.state.currentShader}></Shader>
+        <Shader shader={this.state.selectedShader}></Shader>
       </div>
     );
   }

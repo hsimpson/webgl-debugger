@@ -1,9 +1,15 @@
 import * as path from 'path';
 import { ipcRenderer, remote } from 'electron';
 import { IPCChannel, IWebGLFunc } from '../../shared/IPC';
-import { WebGLObjectsManager } from './webglobjects/webglObjectsManager';
-import { WebGLFunctionBuffer } from './webglfunctions/webglFunctionBuffer';
-import { WGLObject, WGLCreateFunctions, WGLProgramFunctions, WGLShaderFunctions } from './webglobjects/wglObject';
+import { WebGLObjectsManagerSingleton } from './webglobjects/webglObjectsManager';
+import { WebGLFunctionBufferSingleton } from './webglfunctions/webglFunctionBuffer';
+import {
+  WGLObject,
+  WGLCreateFunctions,
+  WGLProgramFunctions,
+  WGLShaderFunctions,
+  WGLBufferFunctions,
+} from './webglobjects/wglObject';
 import windowStateKeeper = require('electron-window-state');
 
 export async function launchWebGLWindow(
@@ -11,8 +17,8 @@ export async function launchWebGLWindow(
   onClose: (event: Event) => void
   //onClosed: Function
 ): Promise<void> {
-  WebGLObjectsManager.getInstance().clear();
-  WebGLFunctionBuffer.getInstance().clear();
+  WebGLObjectsManagerSingleton.clear();
+  WebGLObjectsManagerSingleton.clear();
 
   const appPath = path.resolve(remote.app.getAppPath());
 
@@ -52,9 +58,9 @@ export async function launchWebGLWindow(
 }
 
 ipcRenderer.on(IPCChannel.WebGLFunc, (_event, webGLFunc: IWebGLFunc) => {
-  console.log(`WebGL call #${webGLFunc.id}: ${webGLFunc.name}`);
+  //console.log(`WebGL call #${webGLFunc.id}: ${webGLFunc.name}`, webGLFunc.args);
 
-  WebGLFunctionBuffer.getInstance().add(webGLFunc, (func: IWebGLFunc) => {
+  WebGLFunctionBufferSingleton.add(webGLFunc, (func: IWebGLFunc) => {
     /*
       if (func.id < 100) {
       }
@@ -62,10 +68,10 @@ ipcRenderer.on(IPCChannel.WebGLFunc, (_event, webGLFunc: IWebGLFunc) => {
 
     const WGLObjectFunctions = [...WGLProgramFunctions, ...WGLShaderFunctions];
     if (func.tag && WGLCreateFunctions.includes(func.name)) {
-      WebGLObjectsManager.getInstance().create(func);
+      WebGLObjectsManagerSingleton.create(func);
     } else if (WGLObjectFunctions.includes(func.name)) {
-      const id = func?.args[0]?.tag.id;
-      const wglObj: WGLObject = WebGLObjectsManager.getInstance().getById(id);
+      const id = func?.args[0]?.tag?.id;
+      const wglObj: WGLObject = WebGLObjectsManagerSingleton.getById(id);
       if (wglObj) {
         const wglObjectFunc = wglObj[func.name] as Function;
         if (wglObjectFunc && wglObjectFunc instanceof Function) {
@@ -75,6 +81,23 @@ ipcRenderer.on(IPCChannel.WebGLFunc, (_event, webGLFunc: IWebGLFunc) => {
         }
       } else {
         console.error(`there is no WebGLObject with id: ${id}`);
+      }
+    } else if (WGLBufferFunctions.includes(func.name)) {
+      if (func.name === 'bindBuffer') {
+        WebGLObjectsManagerSingleton.bindBuffer(func);
+      } else {
+        // get the bound buffer and call the function on it
+        const buffer = WebGLObjectsManagerSingleton.getBoundBuffer();
+        if (buffer) {
+          const wglObjectFunc = buffer[func.name] as Function;
+          if (wglObjectFunc && wglObjectFunc instanceof Function) {
+            wglObjectFunc.apply(buffer, [func]);
+          } else {
+            console.error(`WebGL function: ${func.name} not implemented in ${buffer.name}`);
+          }
+        } else {
+          console.error('there is no bound WebGLBuffer');
+        }
       }
     }
   });

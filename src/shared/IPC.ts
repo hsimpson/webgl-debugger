@@ -22,4 +22,5 @@ export interface IWebGLFunc {
   returnValue: any;
   id: number;
   tag?: IWebGLTag;
+  bufferType?: string;
 }

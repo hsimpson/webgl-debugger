@@ -41,7 +41,7 @@ export class Shader extends React.Component<IShaderProp, IShaderState> {
 
   public render(): React.ReactNode {
     if (this.props.shader) {
-      const options = {
+      const options: monaco.editor.IEditorConstructionOptions = {
         selectOnLineNumbers: true,
         roundedSelection: false,
         readOnly: false,

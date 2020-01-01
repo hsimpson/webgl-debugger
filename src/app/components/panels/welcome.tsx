@@ -8,25 +8,23 @@ export class WelcomePanel extends React.Component {
       <div className="WelcomePanel">
         <PanelTitle title="Welcome"></PanelTitle>
 
-        {/*}
-        <div className="panelContainer">
-          <div className={'WelcomePanelHeader'}>Header</div>
-          <div className={'WelcomePanelContentContainer1'}>
-            <div className={'WelcomePanelContentContainer2'}>
-              <div className={'WelcomePanelContent'}>
-                <p>Content 1</p>
-                <p>Content 2</p>
-                <p>Content 3</p>
-                <p>Content 4</p>
-                <p>Content 5</p>
-                <p>Content 6</p>
-                <p>Content 7</p>
-                <p>Content 8</p>
-              </div>
+        {/*
+          <div className="panelContainer">
+            <div className={'WelcomePanelHeader'}>Header</div>
+            <div className={'WelcomePanelContent'}>
+              <div>Content 1</div>
+              <div>Content 2</div>
+              <div>Content 3</div>
+              <div>Content 4</div>
+              <div>Content 5</div>
+              <div>Content 6</div>
+              <div>Content 7</div>
+              <div>Content 8</div>
+              <div>Content 9</div>
+              <div>Content 10</div>
             </div>
+            <div className={'WelcomePanelFooter'}>Footer</div>
           </div>
-          <div className={'WelcomePanelFooter'}>Footer</div>
-        </div>
         */}
       </div>
     );

@@ -31,6 +31,11 @@ function proxyFunc(funcName, args, returnValue): void {
       returnValue.tag = funcObject.tag;
     }
 
+    // special handling for buffers
+    if (funcObject.name === 'bufferData') {
+      funcObject.bufferType = args[1].constructor.name;
+    }
+
     // only send the first GL calls
     if (funcObject.id < 100) {
       //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`);

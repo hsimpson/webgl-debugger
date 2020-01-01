@@ -1,4 +1,4 @@
-import { WGLObject } from './wglObject';
+import { WGLObject, Constants } from './wglObject';
 import { WGLBuffer } from './wglBuffer';
 import { WGLFramebuffer } from './wglFramebuffer';
 import { WGLRenderbuffer } from './wglRenderbuffer';
@@ -7,17 +7,17 @@ import { WGLTexture } from './wglTexture';
 import { WGLProgram } from './wglProgram';
 import { IWebGLFunc, WebGLObjectType } from '../../../shared/IPC';
 
-export class WebGLObjectsManager {
-  private static _instance: WebGLObjectsManager;
+type BufferTarget = Constants.ARRAY_BUFFER | Constants.ELEMENT_ARRAY_BUFFER;
+class WebGLObjectsManager {
   private _objects: Map<number, WGLObject> = new Map<number, WGLObject>();
 
-  private constructor() {} // eslint-disable-line @typescript-eslint/no-empty-function
-  public static getInstance(): WebGLObjectsManager {
-    if (!WebGLObjectsManager._instance) {
-      WebGLObjectsManager._instance = new WebGLObjectsManager();
-    }
+  private _bufferBinding: {
+    target: BufferTarget;
+    bound: WGLBuffer;
+  };
 
-    return WebGLObjectsManager._instance;
+  public constructor() {
+    this._bufferBinding = { target: undefined, bound: undefined };
   }
 
   public clear(): void {
@@ -84,4 +84,17 @@ export class WebGLObjectsManager {
 
     return ret;
   }
+
+  public bindBuffer(func: IWebGLFunc): void {
+    const buffer = this._objects.get(func.args[1].tag.id) as WGLBuffer;
+
+    this._bufferBinding.bound = buffer;
+    this._bufferBinding.target = func.args[0];
+  }
+
+  public getBoundBuffer(): WGLBuffer {
+    return this._bufferBinding.bound;
+  }
 }
+
+export const WebGLObjectsManagerSingleton = new WebGLObjectsManager();

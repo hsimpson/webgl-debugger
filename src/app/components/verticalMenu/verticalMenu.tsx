@@ -24,6 +24,11 @@ export class VerticalMenu extends React.Component<IVerticalMenuProps, IVerticalM
         faIcon: ['far', 'copy'], // use the prefix 'far' for the regular style icons
       },
       {
+        name: 'buffers',
+        title: 'Buffers',
+        faIcon: ['fab', 'buffer'], // use the prefix 'fab' for brand style icons
+      },
+      {
         name: 'settings',
         title: 'Settings',
         faIcon: 'cogs',

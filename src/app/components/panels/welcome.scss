@@ -10,28 +10,17 @@
   background: red;
   font-size: 48px;
   justify-content: center;
-  margin: 0;
-}
-
-.WelcomePanelContentContainer1 {
-  display: flex;
-  flex: 1 1 auto;
-}
-
-.WelcomePanelContentContainer2 {
-  flex: 1 1 auto;
-  overflow: auto;
 }
 
 .WelcomePanelContent {
-  min-height: 0px;
-  height: 0px;
+  @include fullSizeContainer;
+  flex-direction: column;
+  overflow: auto;
 }
 
 .WelcomePanelContent > * {
-  margin: 5px;
-  padding: 10px;
-  font-size: 24px;
+  padding: 20px;
+  font-size: 32px;
   background: #4343e9;
   border-radius: 8px;
 }
@@ -41,6 +30,5 @@
   background: green;
   font-size: 48px;
   justify-content: center;
-  margin: 0;
 }
 */

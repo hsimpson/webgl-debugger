@@ -1,6 +1,7 @@
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+//import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import path from 'path';
 import webpack from 'webpack';
 
@@ -74,6 +75,7 @@ const electronRendererConfig: webpack.Configuration = {
       // both options are optional
       filename: 'css/app.css',
     }),
+    //new MonacoWebpackPlugin({ languages: ['javascript', 'cpp'] }),
   ],
 };
 export { commonConfig, electronMainConfig, electronRendererConfig };

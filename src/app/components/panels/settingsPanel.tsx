@@ -1,4 +1,4 @@
-import './settings.scss';
+import './settingsPanel.scss';
 import React from 'react';
 import { PanelTitle } from './panelTitle';
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';

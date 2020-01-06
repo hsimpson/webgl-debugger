@@ -1,4 +1,4 @@
-import './launch.scss';
+import './launchPanel.scss';
 import React from 'react';
 import { UrlBar } from '../urlbar/urlbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

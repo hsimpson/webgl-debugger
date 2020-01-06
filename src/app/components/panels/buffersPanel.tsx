@@ -1,4 +1,4 @@
-import './buffers.scss';
+import './buffersPanel.scss';
 import React from 'react';
 import './panelTitle';
 import { PanelTitle } from './panelTitle';

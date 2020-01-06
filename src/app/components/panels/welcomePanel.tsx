@@ -1,4 +1,4 @@
-import './welcome.scss';
+import './welcomePanel.scss';
 import React from 'react';
 import { PanelTitle } from './panelTitle';
 

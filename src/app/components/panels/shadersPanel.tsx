@@ -1,4 +1,4 @@
-import './shaders.scss';
+import './shadersPanel.scss';
 import React from 'react';
 import './panelTitle';
 import { PanelTitle } from './panelTitle';

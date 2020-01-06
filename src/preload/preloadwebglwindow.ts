@@ -1,6 +1,7 @@
 import { ipcRenderer, remote } from 'electron';
 import { IPCChannel, IWebGLFunc } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
+import { getImageDateFromHTMLImage } from '../shared/imageTools';
 
 const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
 
@@ -31,15 +32,31 @@ function proxyFunc(funcName, args, returnValue): void {
       returnValue.tag = funcObject.tag;
     }
 
-    // special handling for buffers
-    if (funcObject.name === 'bufferData') {
-      funcObject.bufferType = args[1].constructor.name;
-    }
-
     // only send the first GL calls
-    if (funcObject.id < 100) {
-      //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`);
-      //ipcRenderer.send(IPCChannel.WebGLFunc, funcObject);
+    if (funcObject.id < 2000) {
+      //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
+
+      // special handling for buffers
+      if (funcObject.name === 'bufferData') {
+        funcObject.bufferType = args[1].constructor.name;
+      }
+
+      // special handling for textures
+      if (funcObject.name === 'texImage2D') {
+        console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
+        if (args[5].constructor.name === 'HTMLImageElement') {
+          console.log(args[5]);
+          const imgData = getImageDateFromHTMLImage(args[5]);
+          console.log(imgData.data.byteLength);
+          args[5] = {
+            data: imgData.data,
+            width: imgData.width,
+            height: imgData.height,
+          };
+          console.log(args[5]);
+        }
+      }
+
       ipcRenderer.sendTo(sharedObject.appWindowId, IPCChannel.WebGLFunc, funcObject);
     }
   }
@@ -51,6 +68,8 @@ function createWebGLProxy(obj, contextId: string): void {
     propNames = Object.getOwnPropertyNames(WebGLRenderingContext.prototype);
   } else if (contextId === 'webgl2') {
     propNames = Object.getOwnPropertyNames(WebGL2RenderingContext.prototype);
+  } else {
+    return;
   }
   for (const propName of propNames) {
     const prop = obj[propName];

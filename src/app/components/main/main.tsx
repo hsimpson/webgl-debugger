@@ -2,7 +2,15 @@ import React from 'react';
 
 import { Themes } from '../../themes';
 
-import { WelcomePanel, LaunchPanel, ShadersPanel, BuffersPanel, SettingsPanel, HelpPanel } from '../panels';
+import {
+  WelcomePanel,
+  LaunchPanel,
+  ShadersPanel,
+  BuffersPanel,
+  TexturesPanel,
+  SettingsPanel,
+  HelpPanel,
+} from '../panels';
 
 import { StatusBar } from '../statusBar/statusBar';
 import { VerticalMenu } from '../verticalMenu/verticalMenu';
@@ -33,6 +41,7 @@ export class Main extends React.Component<IMainProps, IMainState> {
       shaders: ShadersPanel,
       settings: SettingsPanel,
       buffers: BuffersPanel,
+      textures: TexturesPanel,
       help: HelpPanel,
     },
   };

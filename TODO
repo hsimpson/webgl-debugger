@@ -24,10 +24,15 @@ Electron:
       ☐ Table layout
 
     Texture View:
-
-  WebGL Window:
+    
+    WebGL Window:
+    ☐ Serialize the 'texImage2D' and probably other calls which could take a HTMLImageElement to data buffer via canvas
     ☐ Ability to open/close dev tools
     ☐ Handle closing of the WebGL Window
+    ☐ Handle of open/close dev tools
 
 Build system:
   ☐ Packaging
+
+React:
+  ☐ Class components: instead of using "public readonly state" use a this.setState() call in the constructor

@@ -64,17 +64,6 @@ export class BufferView extends React.Component<IBufferViewProp, IBufferViewStat
             <MenuItem value={5}>5</MenuItem>
             <MenuItem value={6}>6</MenuItem>
           </Select>
-          {/*
-            <div className="BufferView-testcontainer">
-              {testArray.map((idx) => {
-                return (
-                  <div className="BufferView-test" key={idx}>
-                    BlaBlub #{idx}
-                  </div>
-                );
-              })}
-            </div>
-          */}
 
           <BufferTable
             buffer={this.props.buffer}

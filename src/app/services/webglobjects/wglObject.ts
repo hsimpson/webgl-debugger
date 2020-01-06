@@ -69,6 +69,8 @@ export const WGLShaderFunctions = [
 
 export const WGLBufferFunctions = ['bindBuffer', 'bufferData', 'buferSubData'];
 
+export const WGLTextureFunctions = ['bindTexture', 'texImage2D'];
+
 export enum Constants {
   FRAGMENT_SHADER = 0x8b30,
   VERTEX_SHADER = 0x8b31,
@@ -82,4 +84,15 @@ export enum Constants {
   STREAM_DRAW = 0x88e0,
   STATIC_DRAW = 0x88e4,
   DYNAMIC_DRAW = 0x88e8,
+
+  /* Texture Objects */
+  TEXTURE_2D = 0x0de1,
+  TEXTURE_CUBE_MAP = 0x8513,
+  TEXTURE_CUBE_MAP_POSITIVE_X = 0x8515,
+  TEXTURE_CUBE_MAP_NEGATIVE_X = 0x8516,
+  TEXTURE_CUBE_MAP_POSITIVE_Y = 0x8517,
+  TEXTURE_CUBE_MAP_NEGATIVE_Y = 0x8518,
+  TEXTURE_CUBE_MAP_POSITIVE_Z = 0x8519,
+  TEXTURE_CUBE_MAP_NEGATIVE_Z = 0x851a,
+  MAX_CUBE_MAP_TEXTURE_SIZE = 0x851c,
 }

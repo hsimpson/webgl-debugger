@@ -3,11 +3,12 @@ import { WGLBuffer } from './wglBuffer';
 import { WGLFramebuffer } from './wglFramebuffer';
 import { WGLRenderbuffer } from './wglRenderbuffer';
 import { WGLShader } from './wglShader';
-import { WGLTexture } from './wglTexture';
+import { WGLTexture, TextureTarget } from './wglTexture';
 import { WGLProgram } from './wglProgram';
 import { IWebGLFunc, WebGLObjectType } from '../../../shared/IPC';
 
 type BufferTarget = Constants.ARRAY_BUFFER | Constants.ELEMENT_ARRAY_BUFFER;
+
 class WebGLObjectsManager {
   private _objects: Map<number, WGLObject> = new Map<number, WGLObject>();
 
@@ -16,8 +17,14 @@ class WebGLObjectsManager {
     bound: WGLBuffer;
   };
 
+  private _textureBinding: {
+    target: TextureTarget;
+    bound: WGLTexture;
+  };
+
   public constructor() {
     this._bufferBinding = { target: undefined, bound: undefined };
+    this._textureBinding = { target: undefined, bound: undefined };
   }
 
   public clear(): void {
@@ -94,6 +101,17 @@ class WebGLObjectsManager {
 
   public getBoundBuffer(): WGLBuffer {
     return this._bufferBinding.bound;
+  }
+
+  public bindTexture(func: IWebGLFunc): void {
+    const texture = this._objects.get(func.args[1].tag.id) as WGLTexture;
+
+    this._textureBinding.bound = texture;
+    this._textureBinding.target = func.args[0];
+  }
+
+  public getBoundTexture(): WGLTexture {
+    return this._textureBinding.bound;
   }
 }
 

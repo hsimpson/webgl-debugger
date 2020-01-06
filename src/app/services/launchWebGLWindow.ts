@@ -9,6 +9,7 @@ import {
   WGLProgramFunctions,
   WGLShaderFunctions,
   WGLBufferFunctions,
+  WGLTextureFunctions,
 } from './webglobjects/wglObject';
 import windowStateKeeper = require('electron-window-state');
 
@@ -97,6 +98,23 @@ ipcRenderer.on(IPCChannel.WebGLFunc, (_event, webGLFunc: IWebGLFunc) => {
           }
         } else {
           console.error('there is no bound WebGLBuffer');
+        }
+      }
+    } else if (WGLTextureFunctions.includes(func.name)) {
+      if (func.name === 'bindTexture') {
+        WebGLObjectsManagerSingleton.bindTexture(func);
+      } else {
+        // get the bound texture and call the function on it
+        const texture = WebGLObjectsManagerSingleton.getBoundTexture();
+        if (texture) {
+          const wglObjectFunc = texture[func.name] as Function;
+          if (wglObjectFunc && wglObjectFunc instanceof Function) {
+            wglObjectFunc.apply(texture, [func]);
+          } else {
+            console.error(`WebGL function: ${func.name} not implemented in ${texture.name}`);
+          }
+        } else {
+          console.error('there is no bound WebGLTexture');
         }
       }
     }

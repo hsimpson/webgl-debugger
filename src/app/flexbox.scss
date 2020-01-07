@@ -3,3 +3,9 @@
   min-height: 0;
   min-width: 0;
 }
+
+@mixin minSizeContainer {
+  flex: 0 1 auto;
+  min-height: 0;
+  min-width: 0;
+}

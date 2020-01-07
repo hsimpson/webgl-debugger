@@ -24,15 +24,18 @@ Electron:
       ☐ Table layout
 
     Texture View:
+      ✔ Render image to keep aspect ratio @done(20-01-08 00:00)
+      ✔ Zoom Image to fit into viewport @done(20-01-07 23:58)
+      ☐ Zoom control
+      ☐ Pixel cursor: which shows RGBA values (maybe in different formats: 0-255, 0.0-1.0, 0-100%)
     
     WebGL Window:
-    ☐ Serialize the 'texImage2D' and probably other calls which could take a HTMLImageElement to data buffer via canvas
-    ☐ Ability to open/close dev tools
-    ☐ Handle closing of the WebGL Window
-    ☐ Handle of open/close dev tools
+      ☐ Serialize the 'texImage2D' and probably other calls which could take a HTMLImageElement to data buffer via canvas
+      ☐ Ability to open/close dev tools
+      ☐ Handle closing of the WebGL Window
+      ☐ Handle of open/close dev tools
 
 Build system:
   ☐ Packaging
 
 React:
-  ☐ Class components: instead of using "public readonly state" use a this.setState() call in the constructor

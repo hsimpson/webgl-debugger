@@ -11,12 +11,14 @@ export interface ITextureViewProp {
 interface ITextureViewState {
   canvasWidth: number;
   canvasHeight: number;
+  zoomToFitFactor: number;
 }
 
 export class TextureView extends React.Component<ITextureViewProp, ITextureViewState> {
   public readonly state: ITextureViewState = {
     canvasWidth: 100,
     canvasHeight: 100,
+    zoomToFitFactor: 0.5,
   };
 
   private _canvasRef = React.createRef<HTMLCanvasElement>();
@@ -30,6 +32,7 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
       if (entries.length) {
         const rect = entries[0].contentRect;
         this.setState({ canvasWidth: rect.width, canvasHeight: rect.height });
+        this._calcFitToViewScale();
         this._draw();
       }
     });
@@ -41,7 +44,10 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     this._ro = null;
   }
 
-  public componentDidUpdate(): void {
+  public componentDidUpdate(prevProps: ITextureViewProp): void {
+    if (this.props.texture !== prevProps.texture) {
+      this._calcFitToViewScale();
+    }
     this._draw();
   }
 
@@ -51,9 +57,30 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
       const imgData = new ImageData(this.props.texture.data, this.props.texture.width, this.props.texture.height);
 
       const image = await window.createImageBitmap(imgData);
-      this._ctx.drawImage(image, 0, 0, this._canvasRef.current.width, this._canvasRef.current.height);
+
+      // get the top left position of the image
+      const x = this._canvasRef.current.width / 2 - (this.props.texture.width / 2) * this.state.zoomToFitFactor;
+      const y = this._canvasRef.current.height / 2 - (this.props.texture.height / 2) * this.state.zoomToFitFactor;
+      this._ctx.drawImage(
+        image,
+        x,
+        y,
+        this.props.texture.width * this.state.zoomToFitFactor,
+        this.props.texture.height * this.state.zoomToFitFactor
+      );
       //this._ctx.putImageData(imgData, 0, 0, 0, 0, this.props.texture.width * 0.2, this.props.texture.height * 0.2);
     }
+  }
+
+  private _calcFitToViewScale(): void {
+    let zoomToFitFactor = 1.0;
+    if (this.props.texture) {
+      zoomToFitFactor = Math.min(
+        this._canvasRef.current.width / this.props.texture.width,
+        this._canvasRef.current.height / this.props.texture.height
+      );
+    }
+    this.setState({ zoomToFitFactor });
   }
 
   private _drawBackground(): void {

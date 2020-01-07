@@ -1,7 +1,7 @@
 @import '../../flexbox.scss';
 
 .TextureList {
-  @include fullSizeContainer;
+  @include minSizeContainer;
   display: flex;
   flex-direction: column;
 }

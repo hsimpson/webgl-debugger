@@ -2,6 +2,7 @@ import { ipcRenderer, remote } from 'electron';
 import { IPCChannel, IWebGLFunc } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 import { getImageDateFromHTMLImage } from '../shared/imageTools';
+import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
 
 const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
 
@@ -10,6 +11,8 @@ console.log(`Id of the electron appclication window: ${sharedObject.appWindowId}
 
 let funcId = 0;
 let tagId = 0;
+
+registerDevToolsShortCutWeb();
 
 function proxyFunc(funcName, args, returnValue): void {
   //console.log(`WebGL function called: ${funcName}`);

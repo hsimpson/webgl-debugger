@@ -1,10 +1,13 @@
 import { remote } from 'electron';
+import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
 
 declare global {
   interface Window {
     __setTheme: () => void;
   }
 }
+
+registerDevToolsShortCutWeb();
 
 function setOSTheme(): void {
   const theme = remote.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';

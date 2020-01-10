@@ -18,7 +18,7 @@ export async function launchWebGLWindow(
   onClose: (event: Event) => void
   //onClosed: Function
 ): Promise<void> {
-  WebGLObjectsManagerSingleton.clear();
+  WebGLFunctionBufferSingleton.clear();
   WebGLObjectsManagerSingleton.clear();
 
   const appPath = path.resolve(remote.app.getAppPath());

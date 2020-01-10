@@ -1,4 +1,5 @@
 Electron:
+  ☐ Add react devtools extension
 
   Main process:
 
@@ -31,9 +32,8 @@ Electron:
     
     WebGL Window:
       ☐ Serialize the 'texImage2D' and probably other calls which could take a HTMLImageElement to data buffer via canvas
-      ☐ Ability to open/close dev tools
       ☐ Handle closing of the WebGL Window
-      ☐ Handle of open/close dev tools
+      ✔ Handle of open/close dev tools @done(20-01-10 21:04)
 
 Build system:
   ☐ Packaging

@@ -1,4 +1,4 @@
-import { BrowserWindow, globalShortcut } from 'electron';
+// import { BrowserWindow, globalShortcut } from 'electron';
 import { remote } from 'electron';
 
 /*
@@ -20,7 +20,7 @@ export function registerDevToolsShortCut(win: Electron.BrowserWindow): void {
 export function registerDevToolsShortCutWeb(): void {
   document.addEventListener('keydown', (event: KeyboardEvent) => {
     // const ctrlPressed = event.getModifierState('Control');
-    //const shiftPressed = event.getModifierState('Shift');
+    // const shiftPressed = event.getModifierState('Shift');
     switch (event.key) {
       case 'F12':
         remote.getCurrentWindow().webContents.toggleDevTools();

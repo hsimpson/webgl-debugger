@@ -19,14 +19,26 @@ export class TexturesPanel extends React.Component<{}, ITexturesPanelState> {
   };
 
   public render(): React.ReactNode {
-    return (
-      <div className="TexturesPanel">
-        <PanelTitle title="Textures"></PanelTitle>
-        <div className="panelContainer">
-          <TextureList onSelectTexture={this.handleSelectTexture}></TextureList>
-          <TextureView texture={this.state.selectedTexture}></TextureView>
+    if (this.state.selectedTexture) {
+      return (
+        <div className="TexturesPanel">
+          <PanelTitle title="Textures"></PanelTitle>
+          <div className="panelContainer">
+            <TextureList onSelectTexture={this.handleSelectTexture}></TextureList>
+            <TextureView texture={this.state.selectedTexture}></TextureView>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="TexturesPanel">
+          <PanelTitle title="Textures"></PanelTitle>
+          <div className="panelContainer">
+            <TextureList onSelectTexture={this.handleSelectTexture}></TextureList>
+            <div>no shader selected</div>
+          </div>
+        </div>
+      );
+    }
   }
 }

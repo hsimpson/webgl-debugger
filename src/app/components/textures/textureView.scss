@@ -6,6 +6,22 @@
   flex-direction: column;
 }
 
+.TextureViewInfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.TextureViewInfoContainer > span,
+.TextureViewInfoContainer > div {
+  padding: 5px;
+}
+
+.TextureViewCursorColor {
+  width: 25px;
+  height: 25px;
+}
+
 .TextureViewCanvasContainer {
   @include fullSizeContainer;
 }
@@ -13,4 +29,5 @@
 .TextureViewCanvas {
   width: 100%;
   height: 100%;
+  cursor: crosshair;
 }

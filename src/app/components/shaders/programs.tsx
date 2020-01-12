@@ -1,7 +1,7 @@
 import React from 'react';
 import { WebGLObjectsManagerSingleton } from '../../services/webglobjects/webglObjectsManager';
 import { WGLProgram } from '../../services/webglobjects/wglProgram';
-import { WGLShader } from '../../services/webglobjects/WGLShader';
+import { WGLShader } from '../../services/webglobjects/wglShader';
 import { WebGLObjectType } from '../../../shared/IPC';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';

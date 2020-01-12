@@ -1,6 +1,6 @@
 import './shader.scss';
 import React from 'react';
-import { WGLShader } from '../../services/webglobjects/WGLShader';
+import { WGLShader } from '../../services/webglobjects/wglShader';
 import MonacoEditor from 'react-monaco-editor';
 import * as monaco from 'monaco-editor';
 //import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';

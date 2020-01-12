@@ -3,7 +3,7 @@ import './textureList.scss';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { WGLTexture } from '../../services/webglobjects/WGLTexture';
+import { WGLTexture } from '../../services/webglobjects/wglTexture';
 import { WebGLObjectsManagerSingleton } from '../../services/webglobjects/webglObjectsManager';
 import { WebGLObjectType } from '../../../shared/IPC';
 

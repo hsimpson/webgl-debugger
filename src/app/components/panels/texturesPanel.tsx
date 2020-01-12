@@ -1,6 +1,6 @@
 import './texturesPanel.scss';
 import React from 'react';
-import { WGLTexture } from '../../services/webglobjects/WGLTexture';
+import { WGLTexture } from '../../services/webglobjects/wglTexture';
 import { PanelTitle } from './panelTitle';
 import { TextureList } from '../textures/textureList';
 import { TextureView } from '../textures/textureView';

@@ -1,6 +1,6 @@
 import './textureView.scss';
 import React from 'react';
-import { WGLTexture } from '../../services/webglobjects/WGLTexture';
+import { WGLTexture } from '../../services/webglobjects/wglTexture';
 import ResizeObserver from 'resize-observer-polyfill';
 import CanvasBackground from '../../../images/texture_background.png';
 import { Constants } from '../../services/webglobjects/wglObject';

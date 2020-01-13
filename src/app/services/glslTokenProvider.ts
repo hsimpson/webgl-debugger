@@ -1,3 +1,6 @@
+/* eslint-disable no-useless-escape, @typescript-eslint/camelcase */
+import * as monaco from 'monaco-editor';
+
 export const glslTokenProvider = {
   defaultToken: 'invalid',
   brackets: [
@@ -232,4 +235,4 @@ export const glslTokenProvider = {
       { include: 'common' },
     ],
   },
-};
+} as monaco.languages.IMonarchLanguage;

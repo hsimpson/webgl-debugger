@@ -36,7 +36,7 @@ export class Shader extends React.Component<IShaderProp, IShaderState> {
     });
 
     m.languages.register({ id: 'glsl' });
-    m.languages.setMonarchTokensProvider('glsl', glslTokenProvider as any);
+    m.languages.setMonarchTokensProvider('glsl', glslTokenProvider);
   }
 
   public render(): React.ReactNode {

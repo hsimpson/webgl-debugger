@@ -7,11 +7,19 @@
     "lint:ts": "eslint ./src/ --ext .ts,.tsx",
     "build:dev": "webpack --config ./build/webpack.dev.ts",
     "build:prod": "webpack --config ./build/webpack.prod.ts",
-    "start": "electron ./dist/app/main.js"
+    "start": "electron ."
   },
   "author": "Daniel Toplak <homer.simpson123@gmx.de>",
   "license": "MIT",
-  "repository": {},
+  "main": "./dist/app/main.js",
+  "bugs": {
+    "url": "https://github.com/hsimpson/webgl-debugger/issues"
+  },
+  "homepage": "https://github.com/hsimpson/webgl-debugger/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hsimpson/webgl-debugger.git"
+  },
   "devDependencies": {
     "@types/copy-webpack-plugin": "^5.0.0",
     "@types/electron-devtools-installer": "^2.2.0",

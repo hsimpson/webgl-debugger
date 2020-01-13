@@ -11,7 +11,7 @@
       "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
       "cwd": "${workspaceRoot}",
       "args": [
-        "./nodescripts/createWebGLBaseProxy.ts",
+        "./config/createWebGLBaseProxy.ts",
         "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl",
         "./src/preload",
         "WebGLProxyBase"
@@ -39,7 +39,9 @@
       //"outputCapture": "std",
       //"program": "${workspaceRoot}/src/main/main.ts",
       "program": "${workspaceRoot}/dist/app/main.js",
-      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
+      "outFiles": [
+        "${workspaceRoot}/dist/**/*.js"
+      ],
       //"runtimeArgs": ["--enable-logging", "--remote-debugging-port=9222"],
       "sourceMaps": true
       //"args": ["${workspaceRoot}/dist/main.js"]

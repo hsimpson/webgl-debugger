@@ -1,5 +1,6 @@
 Electron:
   ☐ Add react devtools extension
+  ☐ Could not be closed on Linux, no close button (reproducable on i3->X11 or sway->wayland)
 
   Main process:
 
@@ -23,6 +24,8 @@ Electron:
       ☐ Guess buffer view layout from gl.vertexAttribPointer() call
       ☐ Layout of precision and buffer layout drop down
       ☐ Table layout
+      ☐ Mesh preview
+      ☐ Mesh export (GLTF, OBJ, STL, ...)
 
     Texture View:
       ✔ Render image to keep aspect ratio @done(20-01-08 00:00)
@@ -37,5 +40,8 @@ Electron:
 
 Build system:
   ☐ Packaging
+  ☐ Github CI
+  ☐ Unit tests (Jest)
+  ☐ Electron test (Spectron)
 
 React:

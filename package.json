@@ -11,7 +11,9 @@
   },
   "author": "Daniel Toplak <homer.simpson123@gmx.de>",
   "license": "MIT",
-  "repository": {},
+  "repository": {
+    "url": "https://github.com/hsimpson/webgl-debugger"
+  },
   "devDependencies": {
     "@types/copy-webpack-plugin": "^5.0.0",
     "@types/electron-devtools-installer": "^2.2.0",
@@ -52,7 +54,7 @@
     "sass-lint": "^1.13.1",
     "sass-loader": "^8.0.1",
     "ts-loader": "^6.2.1",
-    "ts-node": "^8.6.0",
+    "ts-node": "^8.6.1",
     "typescript": "^3.7.4",
     "url-loader": "^3.0.0",
     "webidl2": "^23.10.1",

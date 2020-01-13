@@ -13,7 +13,8 @@ async function createWindow(): Promise<void> {
     .catch((err) => console.log('An error occurred: ', err));
   */
   // Create the browser window.
-  const appPath = path.resolve(app.getAppPath());
+  const appPath = path.resolve(path.join(app.getAppPath(), "dist/app"));
+
   const preloadPath = path.join(appPath, 'preloadapp.js');
   console.log(`preloadPath: ${preloadPath}`);
   mainWindow = new BrowserWindow({
@@ -63,10 +64,10 @@ async function createWindow(): Promise<void> {
   });
 
   // and load the index.html of the app.
-  return mainWindow.loadFile(path.join(app.getAppPath(), '../index.html'));
+  return mainWindow.loadFile(path.join(appPath, '../index.html'));
 }
 
-app.removeAllListeners('ready'); // workaround for https://github.com/electron/electron/issues/19468
+// app.removeAllListeners('ready'); // workaround for https://github.com/electron/electron/issues/19468
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

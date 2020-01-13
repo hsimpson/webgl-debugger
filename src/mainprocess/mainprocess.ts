@@ -93,6 +93,19 @@ BrowserWindow.addDevToolsExtension(
 );
 */
 
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and require them here.
+
+/*
+ipcMain.on(IPCChannel.WebGLFunc, (event, arg: IWebGLFunc) => {
+  //setTimeout(() => {
+  //mainWindow.webContents.send(IPCChannel.WebGLFunc, arg);
+  //}, Math.ceil(Math.random() * 200));
+  console.log(`WebGL call #${arg.id}: ${arg.name}`);
+  mainWindow.webContents.send(IPCChannel.WebGLFunc, arg);
+});
+*/
+
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {

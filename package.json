@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "WebGL Debugger Application based on Electron",
   "scripts": {
-    "webglProxy": "ts-node ./config/createWebGLBaseProxy.ts https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl ./src/preload WebGLProxyBase",
+    "webglProxy": "ts-node ./nodescripts/createWebGLBaseProxy.ts https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl ./src/preload WebGLProxyBase",
     "lint:ts": "eslint ./src/ --ext .ts,.tsx",
     "build:dev": "webpack --config ./config/webpack.dev.ts",
     "build:prod": "webpack --config ./config/webpack.prod.ts",

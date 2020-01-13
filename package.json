@@ -92,7 +92,7 @@
     "spectron": "^9.0.0",
     "ts-jest": "^24.3.0",
     "ts-loader": "^6.2.1",
-    "ts-node": "^8.6.0",
+    "ts-node": "^8.6.1",
     "typescript": "^3.7.4",
     "url-loader": "^3.0.0",
     "webidl2": "^23.10.1",

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { BrowserWindow, app, dialog } from 'electron';
+import { BrowserWindow, Menu, app, dialog, globalShortcut } from 'electron';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
@@ -27,6 +27,22 @@ const createWindow = () => {
           nodeIntegrationInWorker: true,
           preload: fs.realpathSync(path.join(mainPath, '/preloadapp.js')),
         },
+      });
+
+      // toggle menu visibility
+      // mainWindow.setMenuBarVisibility(false);
+
+      // remove main menu completely
+      Menu.setApplicationMenu(null);
+
+      // because we remove the main menu completely, we have to bind the default shortcuts our self
+      globalShortcut.register('CommandOrControl+Q', () => {
+        const focusedWin = BrowserWindow.getFocusedWindow();
+        if (focusedWin && focusedWin !== mainWindow) {
+          focusedWin.close();
+        } else {
+          app.quit();
+        }
       });
 
       const sharedConfiguration: ISharedConfiguration = {
@@ -61,7 +77,21 @@ const createWindow = () => {
         });
     }
   });
-}
+};
+
+
+/*
+installExtension(REACT_DEVELOPER_TOOLS)
+  .then((name) => console.log(`Added Extension:  ${name}`))
+  .catch((err) => console.log('An error occurred: ', err));
+*/
+//await installExtension(REACT_DEVELOPER_TOOLS);
+
+/*
+BrowserWindow.addDevToolsExtension(
+  'C:\\Users\\daniel\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\fmkadmapgofadopljbjfkapdkoienihi\\4.2.0_0'
+);
+*/
 
 app.on('ready', createWindow);
 

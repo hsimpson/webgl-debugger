@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { BrowserWindow, Menu, app } from 'electron';
+import { BrowserWindow, Menu, app, globalShortcut } from 'electron';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
@@ -25,15 +25,28 @@ async function createWindow(): Promise<void> {
     },
   });
 
+  // toggle menu visibility
+  // mainWindow.setMenuBarVisibility(false);
+
+  // remove main menu completely
+  Menu.setApplicationMenu(null);
+
+  // because we remove the main menu completely, we have to bind the default shortcuts our self
+  globalShortcut.register('CommandOrControl+Q', () => {
+    const focusedWin = BrowserWindow.getFocusedWindow();
+    if (focusedWin && focusedWin !== mainWindow) {
+      focusedWin.close();
+    } else {
+      app.quit();
+    }
+  });
+
   const sharedConfiguration: ISharedConfiguration = {
     traceWebGLFunctions: true,
     appWindowId: mainWindow.id,
   };
 
   global['sharedConfiguration'] = sharedConfiguration;
-
-  // remove main menu
-  Menu.setApplicationMenu(null);
 
   // open maximized
   mainWindow.maximize();

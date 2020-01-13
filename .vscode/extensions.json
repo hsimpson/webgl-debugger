@@ -1,0 +1,14 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=827846
+  // for the documentation about the extensions.json format
+  "recommendations": [
+    "cadenas.vscode-glsllint",
+    "davidanson.vscode-markdownlint",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "fabiospampinato.vscode-todo-plus",
+    "glen-84.sass-lint",
+    "mkaufman.htmlhint",
+    "slevesque.shader"
+  ]
+}

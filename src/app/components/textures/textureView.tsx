@@ -15,7 +15,6 @@ export interface ITextureViewProp {
 interface ITextureViewState {
   canvasWidth: number;
   canvasHeight: number;
-  zoomToFitFactor: number;
   zoomFactor: number;
   imageOffsetX: number;
   imageOffsetY: number;
@@ -32,7 +31,6 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
   public readonly state: ITextureViewState = {
     canvasWidth: 100,
     canvasHeight: 100,
-    zoomToFitFactor: 1.0,
     zoomFactor: 1.0,
     imageOffsetX: 0,
     imageOffsetY: 0,
@@ -49,6 +47,9 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
   private _ro: ResizeObserver;
   private _ctx: CanvasRenderingContext2D;
   private _backGroundPattern: CanvasPattern;
+  private _imagBitMap: ImageBitmap;
+  private _mouseDownX = 0;
+  private _mouseDownY = 0;
 
   public componentDidMount(): void {
     this._ctx = this._canvasRef.current.getContext('2d');
@@ -64,6 +65,8 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
 
     this._canvasRef.current.addEventListener('mousemove', this._onCanvasMouseMove);
     this._canvasRef.current.addEventListener('wheel', this._onCanvasMouseWheel);
+    this._canvasRef.current.addEventListener('mousedown', this._onCanvasMouseDown);
+    //this._canvasRef.current.addEventListener('mouseup', this._onCanvasMouseUp);
   }
 
   public componentWillUnmount(): void {
@@ -71,49 +74,60 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     this._ro = null;
   }
 
-  public componentDidUpdate(prevProps: ITextureViewProp): void {
+  public componentDidUpdate(prevProps: ITextureViewProp /*, prevState: ITextureViewState*/): void {
     if (this.props.texture !== prevProps.texture) {
       this._calcFitToViewScale();
       this._draw();
     }
+
+    /*
+    if (prevState.imageOffsetX !== this.state.imageOffsetX || prevState.imageOffsetY !== this.state.imageOffsetY) {
+      //console.log(`imageOffset: ${this.state.imageOffsetX}, ${this.state.imageOffsetY}`);
+      this._draw();
+    }
+    */
   }
 
   private async _draw(): Promise<void> {
+    console.time('draw duration');
+    //console.time('draw Background');
     await this._drawBackground();
+    //console.timeEnd('draw Background');
     if (this.props.texture) {
-      const imgData = new ImageData(this.props.texture.data, this.props.texture.width, this.props.texture.height);
+      if (!this._imagBitMap) {
+        const imgData = new ImageData(this.props.texture.data, this.props.texture.width, this.props.texture.height);
 
-      const image = await window.createImageBitmap(imgData);
+        this._imagBitMap = await window.createImageBitmap(imgData);
+      }
 
+      this._ctx.imageSmoothingEnabled = false;
       this._ctx.drawImage(
-        image,
+        this._imagBitMap,
         this.state.imageOffsetX,
         this.state.imageOffsetY,
-        this.props.texture.width * this.state.zoomToFitFactor * this.state.zoomFactor,
-        this.props.texture.height * this.state.zoomToFitFactor * this.state.zoomFactor
+        this.props.texture.width * this.state.zoomFactor,
+        this.props.texture.height * this.state.zoomFactor
       );
-      //this._ctx.putImageData(imgData, 0, 0, 0, 0, this.props.texture.width * 0.2, this.props.texture.height * 0.2);
+      console.timeEnd('draw duration');
     }
   }
 
   private _calcFitToViewScale(): void {
-    let zoomToFitFactor = 1.0;
+    let zoomFactor = 1.0;
     let imageOffsetX = 0;
     let imageOffsetY = 0;
 
     if (this.props.texture) {
-      zoomToFitFactor = Math.min(
+      zoomFactor = Math.min(
         this._canvasRef.current.width / this.props.texture.width,
         this._canvasRef.current.height / this.props.texture.height
       );
 
       // get the top left position of the image
-      imageOffsetX =
-        this._canvasRef.current.width / 2 - (this.props.texture.width / 2) * zoomToFitFactor * this.state.zoomFactor;
-      imageOffsetY =
-        this._canvasRef.current.height / 2 - (this.props.texture.height / 2) * zoomToFitFactor * this.state.zoomFactor;
+      imageOffsetX = this._canvasRef.current.width / 2 - (this.props.texture.width / 2) * zoomFactor;
+      imageOffsetY = this._canvasRef.current.height / 2 - (this.props.texture.height / 2) * zoomFactor;
     }
-    this.setState({ zoomToFitFactor, imageOffsetX, imageOffsetY });
+    this.setState({ zoomFactor, imageOffsetX, imageOffsetY });
   }
 
   private async _drawBackground(): Promise<void> {
@@ -136,12 +150,21 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
   }
 
   private _onCanvasMouseMove = (event: MouseEvent): void => {
-    let canvasCursorX = Math.round(
-      (event.offsetX - this.state.imageOffsetX) / this.state.zoomToFitFactor / this.state.zoomFactor
-    );
-    let canvasCursorY = Math.round(
-      (event.offsetY - this.state.imageOffsetY) / this.state.zoomToFitFactor / this.state.zoomFactor
-    );
+    let imageOffsetX = this.state.imageOffsetX;
+    let imageOffsetY = this.state.imageOffsetY;
+    let needsRedraw = false;
+
+    if (event.buttons === 4) {
+      // middle mouse button pressed
+      imageOffsetX += event.offsetX - this._mouseDownX;
+      imageOffsetY += event.offsetY - this._mouseDownY;
+      this._mouseDownX = event.offsetX;
+      this._mouseDownY = event.offsetY;
+      needsRedraw = true;
+    }
+
+    let canvasCursorX = Math.round((event.offsetX - imageOffsetX) / this.state.zoomFactor);
+    let canvasCursorY = Math.round((event.offsetY - imageOffsetY) / this.state.zoomFactor);
 
     if (this.props.texture) {
       canvasCursorX = Math.max(0, Math.min(canvasCursorX, this.props.texture.width - 1));
@@ -158,8 +181,6 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
       dataOffset *= 3;
     }
 
-    //console.log(dataOffset);
-
     const cursorR = this.props.texture.data[dataOffset];
     const cursorG = this.props.texture.data[++dataOffset];
     const cursorB = this.props.texture.data[++dataOffset];
@@ -168,11 +189,16 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     this.setState({
       canvasCursorX,
       canvasCursorY,
+      imageOffsetX,
+      imageOffsetY,
       cursorR,
       cursorG,
       cursorB,
       cursorA,
     });
+    if (needsRedraw) {
+      this._draw();
+    }
   };
 
   private _onCanvasMouseWheel = (event: WheelEvent): void => {
@@ -185,11 +211,17 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     }
 
     this.setState({ zoomFactor });
-    this._calcFitToViewScale();
     this._draw();
 
     //console.log(`zoomFactor: ${zoomFactor}`);
   };
+
+  private _onCanvasMouseDown = (event: MouseEvent): void => {
+    this._mouseDownX = event.offsetX;
+    this._mouseDownY = event.offsetY;
+  };
+
+  //private _onCanvasMouseUp = (event: MouseEvent): void => {};
 
   private _handleColorFormatChange = (event: React.ChangeEvent<{ value: number }>): void => {
     const cursorColorFormat = event.target.value;

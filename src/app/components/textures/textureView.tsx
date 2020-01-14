@@ -16,6 +16,7 @@ interface ITextureViewState {
   canvasWidth: number;
   canvasHeight: number;
   zoomToFitFactor: number;
+  zoomFactor: number;
   imageOffsetX: number;
   imageOffsetY: number;
   canvasCursorX: number;
@@ -32,6 +33,7 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     canvasWidth: 100,
     canvasHeight: 100,
     zoomToFitFactor: 1.0,
+    zoomFactor: 1.0,
     imageOffsetX: 0,
     imageOffsetY: 0,
     canvasCursorX: 0,
@@ -61,6 +63,7 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     this._ro.observe(this._canvasRef.current);
 
     this._canvasRef.current.addEventListener('mousemove', this._onCanvasMouseMove);
+    this._canvasRef.current.addEventListener('wheel', this._onCanvasMouseWheel);
   }
 
   public componentWillUnmount(): void {
@@ -86,8 +89,8 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
         image,
         this.state.imageOffsetX,
         this.state.imageOffsetY,
-        this.props.texture.width * this.state.zoomToFitFactor,
-        this.props.texture.height * this.state.zoomToFitFactor
+        this.props.texture.width * this.state.zoomToFitFactor * this.state.zoomFactor,
+        this.props.texture.height * this.state.zoomToFitFactor * this.state.zoomFactor
       );
       //this._ctx.putImageData(imgData, 0, 0, 0, 0, this.props.texture.width * 0.2, this.props.texture.height * 0.2);
     }
@@ -105,8 +108,10 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
       );
 
       // get the top left position of the image
-      imageOffsetX = this._canvasRef.current.width / 2 - (this.props.texture.width / 2) * zoomToFitFactor;
-      imageOffsetY = this._canvasRef.current.height / 2 - (this.props.texture.height / 2) * zoomToFitFactor;
+      imageOffsetX =
+        this._canvasRef.current.width / 2 - (this.props.texture.width / 2) * zoomToFitFactor * this.state.zoomFactor;
+      imageOffsetY =
+        this._canvasRef.current.height / 2 - (this.props.texture.height / 2) * zoomToFitFactor * this.state.zoomFactor;
     }
     this.setState({ zoomToFitFactor, imageOffsetX, imageOffsetY });
   }
@@ -131,8 +136,12 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
   }
 
   private _onCanvasMouseMove = (event: MouseEvent): void => {
-    let canvasCursorX = Math.round((event.offsetX - this.state.imageOffsetX) / this.state.zoomToFitFactor);
-    let canvasCursorY = Math.round((event.offsetY - this.state.imageOffsetY) / this.state.zoomToFitFactor);
+    let canvasCursorX = Math.round(
+      (event.offsetX - this.state.imageOffsetX) / this.state.zoomToFitFactor / this.state.zoomFactor
+    );
+    let canvasCursorY = Math.round(
+      (event.offsetY - this.state.imageOffsetY) / this.state.zoomToFitFactor / this.state.zoomFactor
+    );
 
     if (this.props.texture) {
       canvasCursorX = Math.max(0, Math.min(canvasCursorX, this.props.texture.width - 1));
@@ -164,6 +173,22 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
       cursorB,
       cursorA,
     });
+  };
+
+  private _onCanvasMouseWheel = (event: WheelEvent): void => {
+    let zoomFactor = this.state.zoomFactor;
+    const fixZoom = 1.25;
+    if (event.deltaY < 0) {
+      zoomFactor *= fixZoom;
+    } else {
+      zoomFactor /= fixZoom;
+    }
+
+    this.setState({ zoomFactor });
+    this._calcFitToViewScale();
+    this._draw();
+
+    //console.log(`zoomFactor: ${zoomFactor}`);
   };
 
   private _handleColorFormatChange = (event: React.ChangeEvent<{ value: number }>): void => {

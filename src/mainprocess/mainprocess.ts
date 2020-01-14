@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { BrowserWindow, Menu, app, dialog, globalShortcut } from 'electron';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
+import windowStateKeeper = require('electron-window-state');
+
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 const basePath: string = fs.realpathSync(path.join(app.getAppPath()));
@@ -17,7 +19,18 @@ let mainWindow: BrowserWindow;
 const createWindow = (): Promise<void> => {
   return new Promise((resolved, rejected) => {
     if (!mainWindow) {
+      const mainWindowState = windowStateKeeper({
+        file: 'webgl-debuggerwindow.json',
+        defaultWidth: 800,
+        defaultHeight: 600,
+      });
+
       mainWindow = new BrowserWindow({
+        x: mainWindowState.x,
+        y: mainWindowState.y,
+        width: mainWindowState.width,
+        height: mainWindowState.height,
+        show: false, // do not show during creation
         webPreferences: {
           defaultEncoding: 'UTF-8',
           //devTools: debug,
@@ -27,6 +40,11 @@ const createWindow = (): Promise<void> => {
           preload: fs.realpathSync(path.join(mainPath, '/preloadapp.js')),
         },
       });
+
+      // Let us register listeners on the window, so we can update the state
+      // automatically (the listeners will be removed when the window is closed)
+      // and restore the maximized or full screen state
+      mainWindowState.manage(mainWindow);
 
       // toggle menu visibility
       // mainWindow.setMenuBarVisibility(false);
@@ -44,6 +62,12 @@ const createWindow = (): Promise<void> => {
         }
       });
 
+      if (debug) {
+        globalShortcut.register('F5', () => {
+          mainWindow.reload();
+        });
+      }
+
       const sharedConfiguration: ISharedConfiguration = {
         traceWebGLFunctions: true,
         appWindowId: mainWindow.id,
@@ -52,7 +76,6 @@ const createWindow = (): Promise<void> => {
 
       global['sharedConfiguration'] = sharedConfiguration;
 
-      mainWindow.hide();
       mainWindow.setMenuBarVisibility(false);
       mainWindow
         .loadFile(fs.realpathSync(path.join(rendererPath, '/index.html')))
@@ -65,7 +88,6 @@ const createWindow = (): Promise<void> => {
             mainWindow = null;
           });
 
-          mainWindow.maximize();
           mainWindow.show();
 
           resolved();

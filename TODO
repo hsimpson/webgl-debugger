@@ -1,12 +1,11 @@
 Electron:
   ☐ Add react devtools extension
-  ☐ Could not be closed on Linux, no close button (reproducable on i3->X11 or sway->wayland)
+  ✔ Could not be closed on Linux, no close button (reproducable on i3->X11 or sway->wayland) @done(20-01-14 23:23)
   ☐ Add app icon
   ☐ Add electron-reload to reload main process
 
   Main process:
    
-  
   Render process:
 
     Themes:
@@ -33,19 +32,27 @@ Electron:
     Texture View:
       ✔ Render image to keep aspect ratio @done(20-01-08 00:00)
       ✔ Zoom Image to fit into viewport @done(20-01-07 23:58)
-      ☐ Zoom control
+      ✔ Zoom control @done(20-01-14 23:24)
       ✔ Pixel cursor: which shows RGBA values (maybe in different formats: 0-255, 0.0-1.0, 0-100%) @done(20-01-11 01:29)
+    
+    Settings View:
+      ☐ Configure action/mouse button to pan in texture view (maybe no middle mousebutton is available)
     
     WebGL Window:
       ☐ Serialize the 'texImage2D' and probably other calls which could take a HTMLImageElement to data buffer via canvas
       ☐ Handle closing of the WebGL Window
       ✔ Handle of open/close dev tools @done(20-01-10 21:04)
+    
 
 Build system:
-  ☐ Packaging
   ☐ Github CI
-  ☐ Unit tests (Jest)
-  ☐ Electron test (Spectron)
-  ☐ Improve import paths
+
+  WebPack:
+    ☐ Packaging electron-packager
+    ☐ Unit tests (Jest)
+    ☐ Electron test (Spectron)
+    ☐ Improve import paths
+    ☐ Try to generate fontawsome icons out of bundle, as svg
+    ☐ Add webpack bundle analyzer in dev build
 
 React:

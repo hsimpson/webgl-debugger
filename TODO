@@ -1,9 +1,12 @@
 Electron:
   ☐ Add react devtools extension
   ☐ Could not be closed on Linux, no close button (reproducable on i3->X11 or sway->wayland)
+  ☐ Add app icon
+  ☐ Add electron-reload to reload main process
 
   Main process:
-
+   
+  
   Render process:
 
     Themes:
@@ -17,7 +20,7 @@ Electron:
       ☐ Handle code change
       ☐ Show diff when code has changed
       ☐ Roll back to original code
-      ☐ Validate code
+      ☐ Validate code (via glslangValidator, maybe as native electron plugin)
       ☐ Copy code button
 
     Buffer View:
@@ -43,5 +46,6 @@ Build system:
   ☐ Github CI
   ☐ Unit tests (Jest)
   ☐ Electron test (Spectron)
+  ☐ Improve import paths
 
 React:

@@ -1,3 +1,1 @@
-
-export const UrlBar = "UrlBar";
-
+export const UrlBar = 'UrlBar';

@@ -1,6 +1,8 @@
 import { remote } from 'electron';
 import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
 
+console.log('Hello from the preload script of the main window');
+
 declare global {
   interface Window {
     __setTheme: () => void;

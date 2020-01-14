@@ -1,25 +1,24 @@
-import * as spectron from "spectron";
+import * as spectron from 'spectron';
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
-const screenshotsPath = path.join(__dirname, "/screenshots/");
+const screenshotsPath = path.join(__dirname, '/screenshots/');
 
 if (!fs.existsSync(screenshotsPath)) {
-  fs.mkdirSync(path.join(__dirname, "/screenshots/"));
+  fs.mkdirSync(path.join(__dirname, '/screenshots/'));
 }
 
-describe("Electron App", () => {
-
-  const applicationPath: string = fs.realpathSync(path.join(__dirname, ".."));
+describe('Electron App', () => {
+  const applicationPath: string = fs.realpathSync(path.join(__dirname, '..'));
 
   let testSubject: spectron.Application;
-  let counter: number = 0;
+  let counter = 0;
 
   beforeAll(() => {
     testSubject = new spectron.Application({
       args: [applicationPath],
-      path: "node_modules/.bin/electron",
+      path: 'node_modules/.bin/electron',
       startTimeout: 10000,
     });
 
@@ -33,7 +32,10 @@ describe("Electron App", () => {
   });
 
   beforeEach(() => {
-    return testSubject.client.waitUntilTextExists("div.Main > div.MainArea > div.WelcomePanel > div.PanelTitle > span", "Welcome");
+    return testSubject.client.waitUntilTextExists(
+      'div.Main > div.MainArea > div.WelcomePanel > div.PanelTitle > span',
+      'Welcome'
+    );
   });
 
   afterEach(() => {
@@ -47,11 +49,15 @@ describe("Electron App", () => {
     });
   });
 
-  it("has correct welcome page", () => {
-    return expect(testSubject.client.getText("div.Main > div.MainArea > div.WelcomePanel > div.PanelTitle > span")).resolves.toBe("Welcome");
+  it('has correct welcome page', () => {
+    return expect(
+      testSubject.client.getText('div.Main > div.MainArea > div.WelcomePanel > div.PanelTitle > span')
+    ).resolves.toBe('Welcome');
   });
 
-  it("clicking on Launch WebGL site", () => {
-    return testSubject.client.element("div.MainArea > div.VerticalMenu > div.VerticalMenuButton[title='Launch WebGL site']").click();
+  it('clicking on Launch WebGL site', () => {
+    return testSubject.client
+      .element('div.MainArea > div.VerticalMenu > div.VerticalMenuButton[title="Launch WebGL site"]')
+      .click();
   });
 });

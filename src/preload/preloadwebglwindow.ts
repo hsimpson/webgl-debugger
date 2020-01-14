@@ -6,7 +6,7 @@ import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
 
 const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
 
-console.log('this is the preload script transpiled from TS');
+console.log('Hello from the preload script of the webgl window');
 console.log(`Id of the electron appclication window: ${sharedObject.appWindowId}`);
 
 let funcId = 0;

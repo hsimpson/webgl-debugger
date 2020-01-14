@@ -5,23 +5,22 @@ import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 const basePath: string = fs.realpathSync(path.join(app.getAppPath()));
-const appPath: string = fs.realpathSync(path.join(basePath, 'dist/app'));
+const appBundlePath: string = path.join(basePath, 'dist/app');
 
-const mainPath: string = fs.realpathSync(path.join(appPath));
-const rendererPath: string = fs.realpathSync(path.join(appPath, ".."));
+const mainPath: string = fs.realpathSync(path.join(appBundlePath));
+const rendererPath: string = fs.realpathSync(path.join(appBundlePath, '..'));
 
 const debug: boolean = process.env.DEBUG !== undefined;
 
 let mainWindow: BrowserWindow;
 
-const createWindow = () => {
+const createWindow = (): Promise<void> => {
   return new Promise((resolved, rejected) => {
-
     if (!mainWindow) {
       mainWindow = new BrowserWindow({
         webPreferences: {
           defaultEncoding: 'UTF-8',
-          devTools: debug,
+          //devTools: debug,
           nodeIntegration: true,
           nodeIntegrationInSubFrames: true,
           nodeIntegrationInWorker: true,
@@ -48,18 +47,18 @@ const createWindow = () => {
       const sharedConfiguration: ISharedConfiguration = {
         traceWebGLFunctions: true,
         appWindowId: mainWindow.id,
+        appBundlePath,
       };
 
       global['sharedConfiguration'] = sharedConfiguration;
 
       mainWindow.hide();
       mainWindow.setMenuBarVisibility(false);
-      mainWindow.loadFile(fs.realpathSync(path.join(rendererPath, '/index.html')))
+      mainWindow
+        .loadFile(fs.realpathSync(path.join(rendererPath, '/index.html')))
         .then(() => {
           if (debug) {
-            mainWindow.webContents.openDevTools({
-              mode: 'right',
-            });
+            mainWindow.webContents.openDevTools();
           }
 
           mainWindow.on('closed', () => {
@@ -78,7 +77,6 @@ const createWindow = () => {
     }
   });
 };
-
 
 /*
 installExtension(REACT_DEVELOPER_TOOLS)

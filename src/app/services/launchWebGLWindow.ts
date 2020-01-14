@@ -12,18 +12,20 @@ import {
   WGLTextureFunctions,
 } from './webglobjects/wglObject';
 import windowStateKeeper = require('electron-window-state');
+import { ISharedConfiguration } from '../../shared/ISharedConfiguration';
 
 export async function launchWebGLWindow(
   url: string,
   onClose: (event: Event) => void
   //onClosed: Function
 ): Promise<void> {
+  const sharedConfiguration = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
+
   WebGLFunctionBufferSingleton.clear();
   WebGLObjectsManagerSingleton.clear();
 
-  const appPath = path.resolve(remote.app.getAppPath());
+  const preloadPath = path.join(sharedConfiguration.appBundlePath, 'preloadwebglwindow.js');
 
-  const preloadPath = path.join(appPath, 'preloadwebglwindow.js');
   console.log(`preloadPath: ${preloadPath}`);
 
   // Load the previous state with fallback to defaults

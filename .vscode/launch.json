@@ -18,18 +18,10 @@
       ]
     },
     {
-      "type": "node",
-      "request": "launch",
-      "name": "Gulp debugging",
-      "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-      "cwd": "${workspaceRoot}",
-      "args": []
-    },
-    {
       "name": "Debug Main Process",
       "type": "node",
       "request": "launch",
-      "trace": "all",
+      //"trace": "verbose",
       "protocol": "inspector",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
@@ -39,9 +31,8 @@
       //"outputCapture": "std",
       //"program": "${workspaceRoot}/src/main/main.ts",
       "program": "${workspaceRoot}/dist/app/main.js",
-      "outFiles": [
-        "${workspaceRoot}/dist/**/*.js"
-      ],
+      "env": { "DEBUG": "1" },
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
       //"runtimeArgs": ["--enable-logging", "--remote-debugging-port=9222"],
       "sourceMaps": true
       //"args": ["${workspaceRoot}/dist/main.js"]

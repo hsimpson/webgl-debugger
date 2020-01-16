@@ -1,10 +1,10 @@
 Electron:
-  ☐ Add react devtools extension
-  ✔ Could not be closed on Linux, no close button (reproducable on i3->X11 or sway->wayland) @done(20-01-14 23:23)
-  ☐ Add app icon
-  ☐ Add electron-reload to reload main process
+✔ Could not be closed on Linux, no close button (reproducable on i3->X11 or sway->wayland) @done(20-01-14 23:23)
+☐ Add app icon
 
-  Main process:
+Main process:
+  ☐ Add react devtools extension
+  ☐ Add electron-reload to reload main process
    
   Render process:
 
@@ -53,6 +53,6 @@ Build system:
     ☐ Electron test (Spectron)
     ☐ Improve import paths
     ☐ Try to generate fontawsome icons out of bundle, as svg
-    ☐ Add webpack bundle analyzer in dev build
+    ✔ Add webpack bundle analyzer in dev build @done(20-01-16 01:45)
 
 React:

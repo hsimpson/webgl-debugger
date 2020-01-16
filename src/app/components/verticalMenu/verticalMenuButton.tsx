@@ -1,8 +1,8 @@
 import './verticalMenuButton.scss';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import React from 'react';
-import { Tooltip } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 
 export interface IVerticalMenuButtonProps {
   name: string;

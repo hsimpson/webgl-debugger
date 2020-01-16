@@ -15,8 +15,9 @@ import {
 import { StatusBar } from '../statusBar/statusBar';
 import { VerticalMenu } from '../verticalMenu/verticalMenu';
 
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { CssBaseline } from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/core/styles';
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import './main.scss';
 
 interface IMainProps {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
 
 import * as styles from './urlbar.scss';
 
@@ -9,7 +9,6 @@ interface IUrlBarProps {
 }
 
 export class UrlBar extends React.Component<IUrlBarProps> {
-
   private handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     this.props.onChange(event.target.value);
   };

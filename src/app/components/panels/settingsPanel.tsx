@@ -1,7 +1,10 @@
 import './settingsPanel.scss';
 import React from 'react';
 import { PanelTitle } from './panelTitle';
-import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 type ThemeTypes = 'dark' | 'light' | 'system';
 interface ISettingsPanelState {

@@ -2,7 +2,7 @@ import './launchPanel.scss';
 import React from 'react';
 import { UrlBar } from '../urlbar/urlbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import { launchWebGLWindow } from '../../services/launchWebGLWindow';
 import { PanelTitle } from './panelTitle';
 

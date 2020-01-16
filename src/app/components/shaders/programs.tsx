@@ -5,10 +5,10 @@ import { WGLShader } from '../../services/webglobjects/wglShader';
 import { WebGLObjectType } from '../../../shared/IPC';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
-import './programs.scss';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { Shader } from './shader';
+import './programs.scss';
 
 interface IProgramsState {
   selectedShader: WGLShader;

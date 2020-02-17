@@ -19,8 +19,18 @@ export interface IWebGLTag {
 export interface IWebGLFunc {
   name: string;
   args: any[];
-  returnValue: any;
+  returnValue?: any;
   id: number;
   tag?: IWebGLTag;
   bufferType?: string;
 }
+
+export const OpaqueWebGLObjects = [
+  'WebGLBuffer',
+  'WebGLFramebuffer',
+  'WebGLProgram',
+  'WebGLRenderbuffer',
+  'WebGLShader',
+  'WebGLTexture',
+  'WebGLUniformLocation',
+];

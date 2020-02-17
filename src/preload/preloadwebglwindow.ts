@@ -1,7 +1,7 @@
 import { ipcRenderer, remote } from 'electron';
-import { IPCChannel, IWebGLFunc } from '../shared/IPC';
+import { IPCChannel, IWebGLFunc, OpaqueWebGLObjects } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
-import { getImageDateFromHTMLImage } from '../shared/imageTools';
+import { getImageDataFromHTMLImage } from '../shared/imageTools';
 import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
 
 const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
@@ -20,7 +20,6 @@ function proxyFunc(funcName, args, returnValue): void {
     const funcObject: IWebGLFunc = {
       name: funcName,
       args,
-      returnValue,
       id: funcId++,
     };
 
@@ -37,19 +36,14 @@ function proxyFunc(funcName, args, returnValue): void {
 
     // only send the first GL calls
     if (funcObject.id < 2000) {
-      //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
-
-      // special handling for buffers
-      if (funcObject.name === 'bufferData') {
-        funcObject.bufferType = args[1].constructor.name;
-      }
+      console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
 
       // special handling for textures
       if (funcObject.name === 'texImage2D') {
         console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
         if (args[5].constructor.name === 'HTMLImageElement') {
           console.log(args[5]);
-          const imgData = getImageDateFromHTMLImage(args[5]);
+          const imgData = getImageDataFromHTMLImage(args[5]);
           console.log(imgData.data.byteLength);
           args[5] = {
             data: imgData.data,
@@ -60,7 +54,25 @@ function proxyFunc(funcName, args, returnValue): void {
         }
       }
 
-      ipcRenderer.sendTo(sharedObject.appWindowId, IPCChannel.WebGLFunc, funcObject);
+      // check if args is a opaque webgl object
+      const newArgs = [];
+      for (const arg of args) {
+        if (OpaqueWebGLObjects.includes(arg.constructor.name)) {
+          newArgs.push({
+            tag: arg.tag,
+          });
+        } else {
+          newArgs.push(arg);
+        }
+      }
+
+      funcObject.args = newArgs;
+
+      try {
+        ipcRenderer.sendTo(sharedObject.appWindowId, IPCChannel.WebGLFunc, funcObject);
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 }

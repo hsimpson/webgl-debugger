@@ -16,9 +16,27 @@ type BufferType =
   | BigInt64Array
   | BigUint64Array;
 
+export type BufferTarget = Constants.ARRAY_BUFFER | Constants.ELEMENT_ARRAY_BUFFER;
+
 export class WGLBuffer extends WGLObject {
+  private _target: BufferTarget;
   private _usage: BufferUsage;
   private _buffer: BufferType;
+
+  public get target(): BufferTarget {
+    return this._target;
+  }
+
+  public get targetString(): string {
+    switch (this._target) {
+      case Constants.ARRAY_BUFFER:
+        return 'ARRAY_BUFFER';
+      case Constants.ELEMENT_ARRAY_BUFFER:
+        return 'ELEMENT_ARRAY_BUFFER';
+      default:
+        return 'unknown';
+    }
+  }
 
   public get usage(): BufferUsage {
     return this._usage;
@@ -34,13 +52,8 @@ export class WGLBuffer extends WGLObject {
   */
 
   public bufferData(func: IWebGLFunc): void {
+    this._target = func.args[0];
+    this._buffer = func.args[1];
     this._usage = func.args[2];
-
-    const bufferConstructor = window[func.bufferType];
-    //console.log(`buffer #${this.id}: ${func.bufferType}`);
-
-    if (bufferConstructor) {
-      this._buffer = new bufferConstructor(func.args[1].buffer);
-    }
   }
 }

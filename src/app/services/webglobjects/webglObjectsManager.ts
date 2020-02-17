@@ -1,13 +1,11 @@
-import { WGLObject, Constants } from './wglObject';
-import { WGLBuffer } from './wglBuffer';
+import { WGLObject } from './wglObject';
+import { WGLBuffer, BufferTarget } from './wglBuffer';
 import { WGLFramebuffer } from './wglFramebuffer';
 import { WGLRenderbuffer } from './wglRenderbuffer';
 import { WGLShader } from './wglShader';
 import { WGLTexture, TextureTarget } from './wglTexture';
 import { WGLProgram } from './wglProgram';
 import { IWebGLFunc, WebGLObjectType } from '../../../shared/IPC';
-
-type BufferTarget = Constants.ARRAY_BUFFER | Constants.ELEMENT_ARRAY_BUFFER;
 
 class WebGLObjectsManager {
   private _objects: Map<number, WGLObject> = new Map<number, WGLObject>();

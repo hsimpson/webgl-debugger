@@ -36,10 +36,11 @@ export class BufferView extends React.Component<IBufferViewProp, IBufferViewStat
 
   public render(): React.ReactNode {
     if (this.props.buffer) {
-      const testArray = [...Array(15).keys()];
+      //const testArray = [...Array(15).keys()];
       return (
         <div className="BufferView">
           <div>{`TypedArray: ${this.props.buffer.buffer.constructor.name}`}</div>
+          <div>{`Target: ${this.props.buffer.targetString}`}</div>
           <InputLabel id="bufferlayout-select-label">Buffer Layout</InputLabel>
           <Select
             labelId="bufferlayout-select-label"

@@ -4,6 +4,7 @@ Electron:
 
 Main process:
   ☐ Add react devtools extension
+    - this only works when https://github.com/electron/electron/issues/19468 is fixed
   ☐ Add electron-reload to reload main process
    
   Render process:
@@ -42,7 +43,10 @@ Main process:
       ☐ Serialize the 'texImage2D' and probably other calls which could take a HTMLImageElement to data buffer via canvas
       ☐ Handle closing of the WebGL Window
       ✔ Handle of open/close dev tools @done(20-01-10 21:04)
-    
+      ✔ @critical do not send WebGL objects like WebGLShader through IPC (e.g. in a call of gl.shaderSource(...)) @done(20-02-17 23:05)
+        - Electron 8.x changes IPC serializing to "Structured Clone" algorithm and throw deprication warning
+        - Electron 9.x throw an exception when there is a non serializable object like WebGLShader or any other opaque WebGL object
+        ✔ Also check if typed arrays are transfered correctly with the new "Structed Clone" algorithm @done(20-02-17 23:05)
 
 Build system:
   ☐ Github CI
@@ -56,3 +60,4 @@ Build system:
     ✔ Add webpack bundle analyzer in dev build @done(20-01-16 01:45)
 
 React:
+  ☐ Add react-router

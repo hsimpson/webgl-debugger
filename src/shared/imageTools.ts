@@ -1,7 +1,7 @@
 let _canvas: HTMLCanvasElement;
 let _context: CanvasRenderingContext2D;
 
-export function getImageDateFromHTMLImage(element: HTMLImageElement): ImageData {
+export function getImageDataFromHTMLImage(element: HTMLImageElement): ImageData {
   if (!_canvas) {
     _canvas = document.createElement('canvas');
   }

@@ -66,7 +66,7 @@ export class WGLTexture extends WGLObject {
     console.log(`WebGL call #${func.id}: ${func.name}`, func.args);
     if (func.args.length === 6) {
       console.log(`Byte length: ${func.args[5].data.length}`);
-      this._data = new Uint8ClampedArray(func.args[5].data);
+      this._data = func.args[5].data;
       this._width = func.args[5].width;
       this._height = func.args[5].height;
     }

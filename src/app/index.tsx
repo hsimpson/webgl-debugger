@@ -9,7 +9,6 @@ import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 import './index.scss';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './icons';
 import { Main } from './components/main/main';
 
 window.__setTheme = () => {

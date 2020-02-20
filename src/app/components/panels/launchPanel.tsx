@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@material-ui/core/Button';
 import { launchWebGLWindow } from '../../services/launchWebGLWindow';
 import { PanelTitle } from './panelTitle';
+import { faRocket } from '@fortawesome/free-solid-svg-icons/faRocket';
 
 interface ILaunchPanelState {
   launchUrl: string;
@@ -14,6 +15,7 @@ interface ILaunchPanelState {
 export class LaunchPanel extends React.Component<{}, ILaunchPanelState> {
   public readonly state: ILaunchPanelState = {
     launchUrl: 'https://mdn.github.io/webgl-examples/tutorial/sample7/',
+    //launchUrl: 'http://127.0.0.1:8080/tutorial/sample6/',
     launchDisabled: false,
   };
 
@@ -22,7 +24,7 @@ export class LaunchPanel extends React.Component<{}, ILaunchPanelState> {
   };
 
   private handleLaunch = (): void => {
-    console.log(`try to open url: ${this.state.launchUrl}`);
+    //console.log(`try to open url: ${this.state.launchUrl}`);
 
     (async () => {
       try {
@@ -46,7 +48,7 @@ export class LaunchPanel extends React.Component<{}, ILaunchPanelState> {
             variant="contained"
             color="primary"
             disabled={this.state.launchDisabled}
-            startIcon={<FontAwesomeIcon icon="rocket"></FontAwesomeIcon>}
+            startIcon={<FontAwesomeIcon icon={faRocket}></FontAwesomeIcon>}
             onClick={this.handleLaunch}>
             Launch
           </Button>

@@ -26,7 +26,7 @@ export async function launchWebGLWindow(
 
   const preloadPath = path.join(sharedConfiguration.appBundlePath, 'preloadwebglwindow.js');
 
-  console.log(`preloadPath: ${preloadPath}`);
+  //console.log(`preloadPath: ${preloadPath}`);
 
   // Load the previous state with fallback to defaults
   const mainWindowState = windowStateKeeper({

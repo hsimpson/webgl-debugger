@@ -14,20 +14,21 @@ Main process:
 
     Styles:
       ✔ Flex Layout is not correct @done(20-01-01 02:03)
+      ☐ Set minimum with and height (e.g. 800*600)
 
     Shader Editor:
       ☐ Improve syntax highlighting
-      ☐ Handle code change
+      ✔ Handle code change @done(20-02-20 00:42) @lasted(3h8m6s)
       ☐ Show diff when code has changed
-      ☐ Roll back to original code
+      ✔ Roll back to original code @done(20-02-20 00:42)
       ☐ Validate code (via glslangValidator, maybe as native electron plugin)
-      ☐ Copy code button
+      ✔ Copy code button @done(20-02-20 00:42)
 
     Buffer View:
-      ☐ Guess buffer view layout from gl.vertexAttribPointer() call
+      ☐ Guess buffer view layout from gl.getAttribLocation() -> gl.vertexAttribPointer()
       ☐ Layout of precision and buffer layout drop down
       ☐ Table layout
-      ☐ Mesh preview
+      ☐ Mesh preview/Point cloud
       ☐ Mesh export (GLTF, OBJ, STL, ...)
 
     Texture View:
@@ -47,6 +48,7 @@ Main process:
         - Electron 8.x changes IPC serializing to "Structured Clone" algorithm and throw deprication warning
         - Electron 9.x throw an exception when there is a non serializable object like WebGLShader or any other opaque WebGL object
         ✔ Also check if typed arrays are transfered correctly with the new "Structed Clone" algorithm @done(20-02-17 23:05)
+      ☐ Set Favicon of website
 
 Build system:
   ☐ Github CI

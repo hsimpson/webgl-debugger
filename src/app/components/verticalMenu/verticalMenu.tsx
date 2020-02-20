@@ -2,6 +2,18 @@ import './verticalMenu.scss';
 import { IVerticalMenuButtonProps, VerticalMenuButton } from './verticalMenuButton';
 import React from 'react';
 
+// free solid
+import { faCogs } from '@fortawesome/free-solid-svg-icons/faCogs';
+import { faRocket } from '@fortawesome/free-solid-svg-icons/faRocket';
+
+// free regular
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons/faQuestionCircle';
+import { faImage } from '@fortawesome/free-regular-svg-icons/faImage';
+import { faFileCode } from '@fortawesome/free-regular-svg-icons/faFileCode';
+
+// free brands
+import { faBuffer } from '@fortawesome/free-brands-svg-icons/faBuffer';
+
 interface IVerticalMenuProps {
   onMenuChanged: (name: string) => void;
 }
@@ -16,32 +28,32 @@ export class VerticalMenu extends React.Component<IVerticalMenuProps, IVerticalM
       {
         name: 'launch',
         title: 'Launch WebGL site',
-        faIcon: 'rocket',
+        faIcon: faRocket,
       },
       {
         name: 'shaders',
         title: 'Programs and Shaders',
-        faIcon: ['far', 'copy'], // use the prefix 'far' for the regular style icons
+        faIcon: faFileCode,
       },
       {
         name: 'buffers',
         title: 'Buffers',
-        faIcon: ['fab', 'buffer'], // use the prefix 'fab' for brand style icons
+        faIcon: faBuffer,
       },
       {
         name: 'textures',
         title: 'Textures',
-        faIcon: ['far', 'image'], // use the prefix 'far' for the regular style icons
+        faIcon: faImage,
       },
       {
         name: 'settings',
         title: 'Settings',
-        faIcon: 'cogs',
+        faIcon: faCogs,
       },
       {
         name: 'help',
         title: 'Help',
-        faIcon: ['far', 'question-circle'], // use the prefix 'far' for the regular style icons
+        faIcon: faQuestionCircle,
       },
     ],
   };

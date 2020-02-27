@@ -85,7 +85,7 @@ export enum Constants {
   STATIC_DRAW = 0x88e4,
   DYNAMIC_DRAW = 0x88e8,
 
-  /* Texture Objects */
+  /* Texture target */
   TEXTURE_2D = 0x0de1,
   TEXTURE_CUBE_MAP = 0x8513,
   TEXTURE_CUBE_MAP_POSITIVE_X = 0x8515,
@@ -95,6 +95,21 @@ export enum Constants {
   TEXTURE_CUBE_MAP_POSITIVE_Z = 0x8519,
   TEXTURE_CUBE_MAP_NEGATIVE_Z = 0x851a,
   MAX_CUBE_MAP_TEXTURE_SIZE = 0x851c,
+
+  /* DataType */
+  BYTE = 0x1400,
+  UNSIGNED_BYTE = 0x1401,
+  SHORT = 0x1402,
+  UNSIGNED_SHORT = 0x1403,
+  INT = 0x1404,
+  UNSIGNED_INT = 0x1405,
+  FLOAT = 0x1406,
+
+  /* PixelType */
+  /*      UNSIGNED_BYTE */
+  UNSIGNED_SHORT_4_4_4_4 = 0x8033,
+  UNSIGNED_SHORT_5_5_5_1 = 0x8034,
+  UNSIGNED_SHORT_5_6_5 = 0x8363,
 
   /* PixelFormat */
   DEPTH_COMPONENT = 0x1902,

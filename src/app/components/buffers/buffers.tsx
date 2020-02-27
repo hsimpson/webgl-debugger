@@ -29,7 +29,7 @@ export class Buffers extends React.Component<{}, IBuffersState> {
 
     return (
       <div className="Buffers">
-        <List component="nav">
+        <List className="BuffersList" component="nav">
           {buffers.map((buffer: WGLBuffer) => {
             return (
               <ListItem

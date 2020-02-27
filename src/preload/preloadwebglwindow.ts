@@ -1,7 +1,7 @@
 import { ipcRenderer, remote } from 'electron';
 import { IPCChannel, IWebGLFunc, OpaqueWebGLObjects } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
-import { getImageDataFromHTMLImage } from '../shared/imageTools';
+import { getImageDataFromHTMLImage, getImageDataFromCanvas } from '../shared/imageTools';
 import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
 
 const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
@@ -36,7 +36,7 @@ function proxyFunc(funcName, args, returnValue): void {
 
     // only send the first GL calls
     if (funcObject.id < 2000) {
-      console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
+      //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
 
       // special handling for textures
       if (funcObject.name === 'texImage2D') {
@@ -51,13 +51,23 @@ function proxyFunc(funcName, args, returnValue): void {
             height: imgData.height,
           };
           console.log(args[5]);
+        } else if (args[5].constructor.name === 'HTMLCanvasElement') {
+          console.log(args[5]);
+          const imgData = getImageDataFromCanvas(args[5]);
+          console.log(imgData.data.byteLength);
+          args[5] = {
+            data: imgData.data,
+            width: imgData.width,
+            height: imgData.height,
+          };
+          console.log(args[5]);
         }
       }
 
       // check if args is a opaque webgl object
       const newArgs = [];
       for (const arg of args) {
-        if (OpaqueWebGLObjects.includes(arg.constructor.name)) {
+        if (arg && typeof arg === 'object' && OpaqueWebGLObjects.includes(arg.constructor.name)) {
           newArgs.push({
             tag: arg.tag,
           });

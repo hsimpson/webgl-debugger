@@ -11,23 +11,37 @@ export type TextureTarget =
   | Constants.TEXTURE_CUBE_MAP_POSITIVE_Z
   | Constants.TEXTURE_CUBE_MAP_NEGATIVE_Z;
 
-export type TextureInternalFormat =
+export type TextureFormat =
   | Constants.ALPHA
   | Constants.LUMINANCE
   | Constants.LUMINANCE_ALPHA
   | Constants.RGB
   | Constants.RGBA;
 
+export type TextureType =
+  | Constants.UNSIGNED_BYTE
+  | Constants.UNSIGNED_SHORT_5_6_5
+  | Constants.UNSIGNED_SHORT_4_4_4_4
+  | Constants.UNSIGNED_SHORT_5_5_5_1;
+
 export class WGLTexture extends WGLObject {
   private _target: TextureTarget;
+  private _format: TextureFormat;
+  private _type: TextureType;
   private _level: number;
   private _width: number;
   private _height: number;
-  private _data: Uint8ClampedArray;
-  private _internalFormat: TextureInternalFormat;
+  private _border: number;
+  private _data: ArrayBuffer;
+  private _internalFormat: TextureFormat;
 
   public get data(): Uint8ClampedArray {
-    return this._data;
+    /*
+    if (this._data.constructor.name !== 'Uint8ClampedArray') {
+      return new Uint8ClampedArray(this._data.buffer);
+    }
+    */
+    return new Uint8ClampedArray(this._data);
   }
 
   public get width(): number {
@@ -38,7 +52,7 @@ export class WGLTexture extends WGLObject {
     return this._height;
   }
 
-  public get internalFormat(): TextureInternalFormat {
+  public get internalFormat(): TextureFormat {
     return this._internalFormat;
   }
 
@@ -63,12 +77,22 @@ export class WGLTexture extends WGLObject {
     this._target = func.args[0];
     this._level = func.args[1];
     this._internalFormat = func.args[2];
+    this._format = func.args[3];
+
     //console.log(`WebGL call #${func.id}: ${func.name}`, func.args);
     if (func.args.length === 6) {
       //console.log(`Byte length: ${func.args[5].data.length}`);
-      this._data = func.args[5].data;
+      this._data = func.args[5].data.buffer;
       this._width = func.args[5].width;
       this._height = func.args[5].height;
+    } else {
+      // must be 9 arguments
+      this._width = func.args[3];
+      this._height = func.args[4];
+      this._border = func.args[5];
+      this._format = func.args[6];
+      this._type = func.args[7];
+      this._data = func.args[8]?.buffer;
     }
   }
 }

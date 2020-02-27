@@ -3,3 +3,8 @@
 .TexturesPanel {
   @include panel;
 }
+
+.TexturesPanel .TextureList {
+  height: 33%;
+  overflow: auto;
+}

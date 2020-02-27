@@ -76,6 +76,7 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
 
   public componentDidUpdate(prevProps: ITextureViewProp /*, prevState: ITextureViewState*/): void {
     if (this.props.texture !== prevProps.texture) {
+      this._imagBitMap = undefined;
       this._calcFitToViewScale();
       this._draw();
     }

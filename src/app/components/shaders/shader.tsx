@@ -3,7 +3,7 @@ import React from 'react';
 import { WGLShader } from '../../services/webglobjects/wglShader';
 import MonacoEditor from 'react-monaco-editor';
 import * as monaco from 'monaco-editor';
-//import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 import { glslTokenProvider } from '../../services/glslTokenProvider';
 import { getCurrentTheme } from '../../themes';
 import Button from '@material-ui/core/Button';
@@ -12,6 +12,10 @@ import { faCopy } from '@fortawesome/free-regular-svg-icons/faCopy';
 import { faUndo } from '@fortawesome/free-solid-svg-icons/faUndo';
 import { faSpellCheck } from '@fortawesome/free-solid-svg-icons/faSpellCheck';
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons/faFileUpload';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
+import { ipcRenderer } from 'electron';
+import { IPCChannel, IShaderValidationMessage, IShaderValidationCode } from '../../../shared/IPC';
 
 export interface IShaderProp {
   shader: WGLShader;
@@ -20,37 +24,58 @@ export interface IShaderProp {
 interface IShaderState {
   theme: 'webglDebugger-dark' | 'webglDebugger-light';
   newShaderCode: string;
+  editorOptions: monaco.editor.IEditorConstructionOptions;
+  validationMessages: IShaderValidationMessage[];
 }
 
 export class Shader extends React.Component<IShaderProp, IShaderState> {
+  private _editorRef = React.createRef<MonacoEditor>();
+
   public readonly state: IShaderState = {
     theme: getCurrentTheme() === 'dark' ? 'webglDebugger-dark' : 'webglDebugger-light',
     newShaderCode: '',
+    editorOptions: {
+      selectOnLineNumbers: true,
+      roundedSelection: true,
+      readOnly: false,
+      cursorStyle: 'line',
+      automaticLayout: true,
+      // folding: true,
+      // showFoldingControls: 'always',
+      // selectionHighlight: false,
+      minimap: {
+        enabled: false,
+      },
+    },
+    validationMessages: [],
   };
 
-  private editorWillMount = (m: typeof monaco): void => {
-    m.editor.defineTheme('webglDebugger-dark', {
+  private editorWillMount = (monaco: typeof monacoEditor): void => {
+    monaco.editor.defineTheme('webglDebugger-dark', {
       base: 'vs-dark',
       inherit: true,
       rules: [],
       colors: {},
     });
 
-    m.editor.defineTheme('webglDebugger-light', {
+    monaco.editor.defineTheme('webglDebugger-light', {
       base: 'vs',
       inherit: true,
       rules: [],
       colors: {},
     });
 
-    m.languages.register({ id: 'glsl' });
-    m.languages.setMonarchTokensProvider('glsl', glslTokenProvider);
+    monaco.languages.register({ id: 'glsl' });
+    monaco.languages.setMonarchTokensProvider('glsl', glslTokenProvider);
   };
 
   public componentDidUpdate(prevProps: IShaderProp /*, prevState: IShaderState*/): void {
     if (this.props.shader !== prevProps.shader) {
       const newShaderCode = this.props.shader.source;
-      this.setState({ newShaderCode });
+      this.setState({
+        newShaderCode,
+        validationMessages: [],
+      });
     }
   }
 
@@ -60,15 +85,31 @@ export class Shader extends React.Component<IShaderProp, IShaderState> {
 
   private _handleResetSource = (): void => {
     const newShaderCode = this.props.shader.source;
-    this.setState({ newShaderCode });
+    this.setState({
+      newShaderCode,
+      validationMessages: [],
+    });
   };
 
   private _handleValidateSource = (): void => {
-    //
+    const codeObj: IShaderValidationCode = {
+      code: this.state.newShaderCode,
+      stage: this.props.shader.glslangValidatorStage,
+    };
+
+    ipcRenderer
+      .invoke(IPCChannel.ValidateShaderRequest, codeObj)
+      .then((validationMessages: IShaderValidationMessage[]) => {
+        //console.log(validationMessages);
+        this.setState({ validationMessages });
+        this._editorRef.current.editor.layout();
+      });
   };
 
   private _handleApplySource = (): void => {
-    //
+    //const editor = this._editorRef.current.editor;
+    //editor.setSelection(new monaco.Range(2, 1, 4, 5));
+    //editor.focus();
   };
 
   private _handleCopySource = (): void => {
@@ -77,19 +118,6 @@ export class Shader extends React.Component<IShaderProp, IShaderState> {
 
   public render(): React.ReactNode {
     if (this.props.shader) {
-      const options: monaco.editor.IEditorConstructionOptions = {
-        selectOnLineNumbers: true,
-        roundedSelection: false,
-        readOnly: false,
-        cursorStyle: 'line',
-        automaticLayout: true,
-        // folding: true,
-        // showFoldingControls: 'always',
-        minimap: {
-          enabled: false,
-        },
-      };
-
       /*
       const testSrc = `
         function foo(bar) {
@@ -100,14 +128,33 @@ export class Shader extends React.Component<IShaderProp, IShaderState> {
 
       return (
         <div className="Shader">
-          <MonacoEditor
-            editorWillMount={this.editorWillMount}
-            language="glsl"
-            value={this.state.newShaderCode}
-            options={options}
-            theme={this.state.theme}
-            onChange={this._handleSourceChange}
-          />
+          <div className="EditorContainer">
+            <MonacoEditor
+              ref={this._editorRef}
+              editorWillMount={this.editorWillMount}
+              language="glsl"
+              value={this.state.newShaderCode}
+              options={this.state.editorOptions}
+              theme={this.state.theme}
+              onChange={this._handleSourceChange}
+            />
+          </div>
+          <div className="ProblemsPanel">
+            {this.state.validationMessages.map((message, idx) => {
+              return (
+                <div key={idx} className={`MessageEntry ${message.severity}`}>
+                  {message.severity === 'ERROR' ? (
+                    <FontAwesomeIcon icon={faTimesCircle} color={'#f48771'}></FontAwesomeIcon>
+                  ) : (
+                    <FontAwesomeIcon icon={faExclamationCircle} color={'#cca700'}></FontAwesomeIcon>
+                  )}
+                  <span className="Message">
+                    {`${message.severity}: ${message.message} [${message.lineNumber}, 1]`}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
           <div className="ShaderButtons">
             <Button
               variant="contained"

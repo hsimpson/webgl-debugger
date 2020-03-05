@@ -1,10 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { BrowserWindow, Menu, app, dialog, globalShortcut } from 'electron';
+import * as os from 'os';
+import { spawn } from 'child_process';
+import { BrowserWindow, Menu, app, dialog, globalShortcut, ipcMain } from 'electron';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 import windowStateKeeper = require('electron-window-state');
+import { IPCChannel, IShaderValidationMessage, IShaderValidationCode, glslValidatorFailCodes } from '../shared/IPC';
 
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+//import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 const basePath: string = fs.realpathSync(path.join(app.getAppPath()));
 //console.log(`+++ basePath: ${app.getAppPath()}`);
@@ -25,6 +28,12 @@ let mainWindow: BrowserWindow;
 
 const createWindow = (): Promise<void> => {
   return new Promise((resolved, rejected) => {
+    /*
+    protocol.interceptStringProtocol('https', (request: Electron.Request, callback): void => {
+      console.log(request.headers);
+    });
+    */
+
     if (!mainWindow) {
       const mainWindowState = windowStateKeeper({
         file: 'webgl-debuggerwindow.json',
@@ -45,6 +54,7 @@ const createWindow = (): Promise<void> => {
           nodeIntegrationInSubFrames: true,
           nodeIntegrationInWorker: true,
           preload: fs.realpathSync(path.join(mainPath, '/preloadapp.js')),
+          enableRemoteModule: true,
         },
       });
 
@@ -135,5 +145,67 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+ipcMain.handle(
+  IPCChannel.ValidateShaderRequest,
+  async (
+    event: Electron.IpcMainInvokeEvent,
+    codeObject: IShaderValidationCode
+  ): Promise<IShaderValidationMessage[]> => {
+    const resultMessages: IShaderValidationMessage[] = [];
+
+    const validatorPath = path.join(rendererPath, 'glslangValidator', os.platform(), 'glslangValidator');
+    const validatorArgs = ['--stdin', '-S', codeObject.stage];
+
+    const childProcess = spawn(validatorPath, validatorArgs);
+    childProcess.stdin.write(codeObject.code);
+    childProcess.stdin.end();
+
+    let stdOutData = '';
+    for await (const chunk of childProcess.stdout) {
+      stdOutData += chunk;
+    }
+
+    let stdErrorData = '';
+    for await (const chunk of childProcess.stderr) {
+      stdErrorData += chunk;
+    }
+
+    const exitCode = await new Promise<number>((resolve) => {
+      childProcess.on('close', resolve);
+    });
+
+    if (exitCode === glslValidatorFailCodes.EFailUsage) {
+      resultMessages.push({
+        message: `Wrong parameters when starting glslangValidator.
+      Arguments:
+      ${validatorArgs.join('\n')}
+      stderr:
+      ${stdErrorData}
+      `,
+        lineNumber: 0,
+        severity: 'ERROR',
+      });
+    } else if (exitCode !== glslValidatorFailCodes.ESuccess) {
+      const lines = stdOutData.toString().split(/(?:\r\n|\r|\n)/g);
+      for (const line of lines) {
+        if (line !== '' && line !== 'stdin') {
+          const matches = line.match(/WARNING:|ERROR:\s.+?(?=:(\d)+):(\d*): (\W.*)/);
+          if (matches && matches.length === 4) {
+            resultMessages.push({
+              message: matches[3],
+              lineNumber: parseInt(matches[2]),
+              severity: line.startsWith('ERROR:') ? 'ERROR' : 'WARNING',
+            });
+            //const errorline = parseInt(matches[2]);
+            //let range = new vscode.Range(errorline - 1, 0, errorline - 1, 0);
+          }
+        }
+      }
+    }
+
+    return resultMessages;
+  }
+);
 
 export default app;

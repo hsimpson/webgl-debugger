@@ -6,6 +6,18 @@
   flex-direction: column;
 }
 
+.EditorContainer {
+  display: flex;
+  flex: 1 1 auto;
+  /*background-color: red;*/
+  align-items: stretch;
+}
+
+.EditorContainer .monaco-editor,
+.EditorContainer .overflow-guard {
+  height: 100% !important; // sass-lint:disable-line no-important
+}
+
 .ShaderButtons {
   display: flex;
   flex-direction: row;
@@ -16,5 +28,35 @@
   margin-right: 10px;
   &:last-child {
     margin-right: 0;
+  }
+}
+
+.ProblemsPanel {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+}
+
+.MessageEntry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 3px;
+
+  &:first-child {
+    padding-top: 6px;
+    border-top-width: 2px;
+    border-top-color: #ffffff; // TODO theming
+    border-top-style: solid;
+  }
+  &:last-child {
+    padding-bottom: 6px;
+    border-bottom-width: 2px;
+    border-bottom-color: #ffffff; // TODO theming
+    border-bottom-style: solid;
+  }
+
+  .Message {
+    margin-left: 10px;
   }
 }

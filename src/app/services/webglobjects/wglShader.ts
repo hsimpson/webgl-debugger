@@ -1,5 +1,5 @@
 import { WGLObject, WebGLShaderWithTag, Constants } from './wglObject';
-import { IWebGLFunc } from '../../../shared/IPC';
+import { IWebGLFunc, GLSLangValidatorStage } from '../../../shared/IPC';
 
 type ShaderType = Constants.VERTEX_SHADER | Constants.FRAGMENT_SHADER;
 export class WGLShader extends WGLObject {
@@ -21,6 +21,15 @@ export class WGLShader extends WGLObject {
 
   public get source(): string {
     return this._source;
+  }
+
+  public get glslangValidatorStage(): GLSLangValidatorStage {
+    switch (this._type) {
+      case Constants.VERTEX_SHADER:
+        return 'vert';
+      case Constants.FRAGMENT_SHADER:
+        return 'frag';
+    }
   }
 
   public get typeString(): string {

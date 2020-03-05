@@ -21,8 +21,11 @@ Main process:
       ✔ Handle code change @done(20-02-20 00:42) @lasted(3h8m6s)
       ☐ Show diff when code has changed
       ✔ Roll back to original code @done(20-02-20 00:42)
-      ☐ Validate code (via glslangValidator, maybe as native electron plugin)
+      ✔ Validate code (via glslangValidator) @done(20-03-05 21:27)
       ✔ Copy code button @done(20-02-20 00:42)
+      ☐ Editor auto completion
+      ☐ Do net select code initial
+      ☐ Move problems panel and its items to new react component
 
     Buffer View:
       ☐ Guess buffer view layout from gl.getAttribLocation() -> gl.vertexAttribPointer()
@@ -49,6 +52,14 @@ Main process:
         - Electron 9.x throw an exception when there is a non serializable object like WebGLShader or any other opaque WebGL object
         ✔ Also check if typed arrays are transfered correctly with the new "Structed Clone" algorithm @done(20-02-17 23:05)
       ☐ Set Favicon of website
+      ☐ Support of getContext in WebWorker -> this is complicated, the preload code must be injected into the worker code
+      ☐ Support of getContect within an IFrame
+      ☐ Close when reloading main window
+
+    About/Help:
+      ☐ About dialog
+      ☐ Licenses for 3rd party libs (Electron, glslangValidator, etc...)
+
 
 Build system:
   ☐ Github CI

@@ -79,7 +79,10 @@ const electronRendererConfig: webpack.Configuration = {
     ],
   },
   plugins: [
-    new CopyWebpackPlugin([{ from: 'src/app/index.html', to: '.' }]),
+    new CopyWebpackPlugin([
+      { from: 'src/app/index.html', to: '.' },
+      { from: 'glslangValidator', to: 'glslangValidator' },
+    ]),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional

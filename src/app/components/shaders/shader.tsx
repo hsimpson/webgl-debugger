@@ -15,7 +15,7 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons/faFileUpload';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import { ipcRenderer } from 'electron';
-import { IPCChannel, IShaderValidationMessage, IShaderValidationCode } from '../../../shared/IPC';
+import { IPCChannel, IShaderValidationMessage, IShaderValidationCode, IShaderUpdate } from '../../../shared/IPC';
 
 export interface IShaderProp {
   shader: WGLShader;
@@ -91,25 +91,41 @@ export class Shader extends React.Component<IShaderProp, IShaderState> {
     });
   };
 
-  private _handleValidateSource = (): void => {
-    const codeObj: IShaderValidationCode = {
-      code: this.state.newShaderCode,
-      stage: this.props.shader.glslangValidatorStage,
-    };
+  private async validate(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const codeObj: IShaderValidationCode = {
+        code: this.state.newShaderCode,
+        stage: this.props.shader.glslangValidatorStage,
+      };
 
-    ipcRenderer
-      .invoke(IPCChannel.ValidateShaderRequest, codeObj)
-      .then((validationMessages: IShaderValidationMessage[]) => {
-        //console.log(validationMessages);
-        this.setState({ validationMessages });
-        this._editorRef.current.editor.layout();
-      });
+      ipcRenderer
+        .invoke(IPCChannel.ValidateShaderRequest, codeObj)
+        .then((validationMessages: IShaderValidationMessage[]) => {
+          //console.log(validationMessages);
+          this.setState({ validationMessages });
+          //this._editorRef.current.editor.layout();
+          if (validationMessages.length) {
+            reject();
+          }
+          resolve();
+        });
+    });
+  }
+
+  private _handleValidateSource = (): void => {
+    this.validate();
   };
 
   private _handleApplySource = (): void => {
-    //const editor = this._editorRef.current.editor;
-    //editor.setSelection(new monaco.Range(2, 1, 4, 5));
-    //editor.focus();
+    this.validate().then(() => {
+      const shaderUpdate: IShaderUpdate = {
+        source: this.state.newShaderCode,
+        shaderId: this.props.shader.id,
+        programId: this.props.shader.programId,
+      };
+
+      ipcRenderer.send(IPCChannel.UpdateShader, shaderUpdate);
+    });
   };
 
   private _handleCopySource = (): void => {

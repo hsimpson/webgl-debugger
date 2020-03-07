@@ -5,6 +5,7 @@ type ShaderType = Constants.VERTEX_SHADER | Constants.FRAGMENT_SHADER;
 export class WGLShader extends WGLObject {
   private _source = '';
   private _type: ShaderType;
+  private _programId: number;
 
   public constructor(func: IWebGLFunc) {
     super(func);
@@ -41,5 +42,13 @@ export class WGLShader extends WGLObject {
       default:
         return 'unknown';
     }
+  }
+
+  public get programId(): number {
+    return this._programId;
+  }
+
+  public set programId(programId: number) {
+    this._programId = programId;
   }
 }

@@ -8,6 +8,7 @@ export class WGLProgram extends WGLObject {
   public attachShader(program: WebGLProgramWithTag, shader: WebGLShaderWithTag): void {
     //console.log(`program: ${program.tag.id}, shader:${shader.tag.id}`);
     const shaderObject = WebGLObjectsManagerSingleton.getById(shader.tag.id) as WGLShader;
+    shaderObject.programId = this.id;
     this._shaders.push(shaderObject);
   }
 

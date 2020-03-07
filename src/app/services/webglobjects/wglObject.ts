@@ -42,6 +42,10 @@ export interface WebGLTextureWithTag extends WebGLTexture {
   tag: IWebGLTag;
 }
 
+export interface WebGLUniformLocationWithTag extends WebGLUniformLocation {
+  tag: IWebGLTag;
+}
+
 export const WGLCreateFunctions = [
   'createBuffer',
   'createFramebuffer',

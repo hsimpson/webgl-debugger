@@ -41,9 +41,15 @@ export async function launchWebGLWindow(
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
       preload: preloadPath,
+      enableRemoteModule: true,
+      nodeIntegrationInSubFrames: true,
     },
   });
+
+  sharedConfiguration.webGLWindow = webGLWindow;
 
   // Let us register listeners on the window, so we can update the state
   // automatically (the listeners will be removed when the window is closed)
@@ -56,6 +62,23 @@ export async function launchWebGLWindow(
   //webGLWindow.maximize();
   //webGLWindow.webContents.openDevTools();
   //console.log(url);
+
+  /*
+  webGLWindow.webContents.session.webRequest.onHeadersReceived(
+    (details: Electron.OnHeadersReceivedListenerDetails, callback) => {
+      console.log(details.requestHeaders);
+      callback({ cancel: false });
+    }
+  );
+  */
+
+  /*
+  webGLWindow.webContents.session.webRequest.onSendHeaders((details: Electron.OnSendHeadersListenerDetails) => {
+    if(details.requestHeaders['Sec-Fetch-Dest'] === 'worker') {
+
+    }
+  });
+  */
 
   return webGLWindow.loadURL(url);
 }

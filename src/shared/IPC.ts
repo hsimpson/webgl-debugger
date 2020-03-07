@@ -1,7 +1,7 @@
 export enum IPCChannel {
   WebGLFunc = 'WebGLFunc',
   ValidateShaderRequest = 'ValidateShaderRequest',
-  ValidateShaderResponse = 'ValidateShaderResponse',
+  UpdateShader = 'UpdateShader',
 }
 
 export enum WebGLObjectType {
@@ -60,4 +60,10 @@ export enum glslValidatorFailCodes {
   EFailCompilerCreate,
   EFailThreadCreate,
   EFailLinkerCreate,
+}
+
+export interface IShaderUpdate {
+  source: string;
+  shaderId: number;
+  programId: number;
 }

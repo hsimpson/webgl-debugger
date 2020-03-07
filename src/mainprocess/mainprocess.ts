@@ -5,7 +5,13 @@ import { spawn } from 'child_process';
 import { BrowserWindow, Menu, app, dialog, globalShortcut, ipcMain } from 'electron';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 import windowStateKeeper = require('electron-window-state');
-import { IPCChannel, IShaderValidationMessage, IShaderValidationCode, glslValidatorFailCodes } from '../shared/IPC';
+import {
+  IPCChannel,
+  IShaderValidationMessage,
+  IShaderValidationCode,
+  glslValidatorFailCodes,
+  IShaderUpdate,
+} from '../shared/IPC';
 
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
@@ -25,6 +31,7 @@ const rendererPath: string = fs.realpathSync(path.join(appBundlePath, '..'));
 const debug: boolean = process.env.DEBUG !== undefined;
 
 let mainWindow: BrowserWindow;
+let sharedConfiguration: ISharedConfiguration;
 
 const createWindow = (): Promise<void> => {
   return new Promise((resolved, rejected) => {
@@ -95,10 +102,11 @@ const createWindow = (): Promise<void> => {
         });
       }
 
-      const sharedConfiguration: ISharedConfiguration = {
+      sharedConfiguration = {
         traceWebGLFunctions: true,
         appWindowId: mainWindow.id,
         appBundlePath,
+        webGLWindow: null,
       };
 
       global['sharedConfiguration'] = sharedConfiguration;
@@ -207,5 +215,13 @@ ipcMain.handle(
     return resultMessages;
   }
 );
+
+ipcMain.on(IPCChannel.UpdateShader, (_event, updateShader: IShaderUpdate) => {
+  //console.log(updateShader);
+  const webcontents = sharedConfiguration?.webGLWindow?.webContents;
+  if (webcontents) {
+    webcontents.send(IPCChannel.UpdateShader, updateShader);
+  }
+});
 
 export default app;

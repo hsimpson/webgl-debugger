@@ -1,5 +1,6 @@
 import './shader.scss';
 import React from 'react';
+import { WGLProgram } from '../../services/webglobjects/wglProgram';
 import { WGLShader } from '../../services/webglobjects/wglShader';
 import MonacoEditor from 'react-monaco-editor';
 import * as monaco from 'monaco-editor';
@@ -18,6 +19,7 @@ import { ipcRenderer } from 'electron';
 import { IPCChannel, IShaderValidationMessage, IShaderValidationCode, IShaderUpdate } from '../../../shared/IPC';
 
 export interface IShaderProp {
+  program: WGLProgram;
   shader: WGLShader;
 }
 
@@ -118,10 +120,23 @@ export class Shader extends React.Component<IShaderProp, IShaderState> {
 
   private _handleApplySource = (): void => {
     this.validate().then(() => {
+      // get the other shader to probably recreate it
+      let otherShader: WGLShader;
+      for (const shader of this.props.program.getShaders()) {
+        if (shader.id !== this.props.shader.id) {
+          otherShader = shader;
+        }
+      }
+
       const shaderUpdate: IShaderUpdate = {
         source: this.state.newShaderCode,
         shaderId: this.props.shader.id,
         programId: this.props.shader.programId,
+        type: this.props.shader.type,
+        otherShader: {
+          source: otherShader.source,
+          type: otherShader.type,
+        },
       };
 
       ipcRenderer.send(IPCChannel.UpdateShader, shaderUpdate);

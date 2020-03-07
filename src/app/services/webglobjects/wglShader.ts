@@ -51,4 +51,9 @@ export class WGLShader extends WGLObject {
   public set programId(programId: number) {
     this._programId = programId;
   }
+
+  public deleteShader(/*shader: WebGLShaderWithTag*/): void {
+    // do nothing here ;-)
+    // see detachShader on wglProgram
+  }
 }

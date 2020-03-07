@@ -1,9 +1,13 @@
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, remote, contentTracing } from 'electron';
 import { IPCChannel, IWebGLFunc, OpaqueWebGLObjects, IShaderUpdate } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
 import { getImageDataFromHTMLImage, getImageDataFromCanvas } from '../shared/imageTools';
 import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
-import { WebGLProgramWithTag, WebGLUniformLocationWithTag } from '../app/services/webglobjects/wglObject';
+import {
+  WebGLProgramWithTag,
+  WebGLUniformLocationWithTag,
+  WebGLShaderWithTag,
+} from '../app/services/webglobjects/wglObject';
 
 const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
 
@@ -37,6 +41,12 @@ function proxyFuncBefore(funcName: string, args: any): void {
       args[0] = newLoc;
     }
   }
+
+  if (funcName === 'deleteShader') {
+    // remove the shader from the map
+    const id = (args[0] as WebGLShaderWithTag).tag.id;
+    shaderMap.delete(id);
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,7 +71,7 @@ function proxyFuncAfter(funcName: string, args: any, returnValue: any): void {
     }
 
     // only send the first GL calls
-    if (funcObject.id < 2000) {
+    if (funcObject.id < 20000) {
       //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
 
       // special handling for textures
@@ -130,17 +140,32 @@ function proxyFuncAfter(funcName: string, args: any, returnValue: any): void {
 function updateShader(context: WebGLRenderingContext | WebGL2RenderingContext, shaderUpdate: IShaderUpdate): void {
   console.log(shaderUpdate);
 
-  const shader = shaderMap.get(shaderUpdate.shaderId);
   const program = programMap.get(shaderUpdate.programId);
-
-  if (!shader) {
-    console.error(`failed to get mapped shader with id: ${shaderUpdate.shaderId}`);
-    return;
-  }
+  let shader = shaderMap.get(shaderUpdate.shaderId);
+  let shadersReCreated = false;
 
   if (!program) {
     console.error(`failed to get mapped program with id: ${shaderUpdate.programId}`);
     return;
+  }
+
+  if (!shader) {
+    // recreate other shader?
+    if (context.getAttachedShaders(program).length === 0) {
+      shadersReCreated = true;
+
+      const otherShader = context.createShader(shaderUpdate.otherShader.type);
+      context.shaderSource(otherShader, shaderUpdate.otherShader.source);
+      context.compileShader(otherShader);
+      if (!context.getShaderParameter(otherShader, context.COMPILE_STATUS)) {
+        console.error(`failed to compile shader: ${context.getShaderInfoLog(otherShader)}`);
+        return;
+      }
+
+      context.attachShader(program, otherShader);
+    }
+    shader = context.createShader(shaderUpdate.type);
+    context.attachShader(program, shader);
   }
 
   context.shaderSource(shader, shaderUpdate.source);
@@ -152,6 +177,13 @@ function updateShader(context: WebGLRenderingContext | WebGL2RenderingContext, s
   }
 
   context.linkProgram(program);
+
+  if (shadersReCreated) {
+    for (const s of context.getAttachedShaders(program)) {
+      context.detachShader(program, s);
+      context.deleteShader(s);
+    }
+  }
 
   if (!context.getProgramParameter(program, context.LINK_STATUS)) {
     console.error(`failed to link program: ${context.getProgramInfoLog(program)}`);

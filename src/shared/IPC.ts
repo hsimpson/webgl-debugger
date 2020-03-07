@@ -66,4 +66,9 @@ export interface IShaderUpdate {
   source: string;
   shaderId: number;
   programId: number;
+  type: number;
+  otherShader: {
+    source: string;
+    type: number;
+  };
 }

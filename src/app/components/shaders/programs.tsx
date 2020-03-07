@@ -11,16 +11,18 @@ import { Shader } from './shader';
 import './programs.scss';
 
 interface IProgramsState {
+  selectedProgram: WGLProgram;
   selectedShader: WGLShader;
 }
 
 export class Programs extends React.Component<{}, IProgramsState> {
   public readonly state: IProgramsState = {
+    selectedProgram: undefined,
     selectedShader: undefined,
   };
 
-  private _handleShaderClick = (selectedShader: WGLShader): void => {
-    this.setState({ selectedShader });
+  private _handleShaderClick = (selectedProgram: WGLProgram, selectedShader: WGLShader): void => {
+    this.setState({ selectedProgram, selectedShader });
   };
 
   public render(): React.ReactNode {
@@ -41,14 +43,14 @@ export class Programs extends React.Component<{}, IProgramsState> {
                       key={shader.id}
                       nodeId={`${shader.id}`}
                       label={`${shader.typeString} shader #${shader.id}`}
-                      onClick={() => this._handleShaderClick(shader)}></TreeItem>
+                      onClick={() => this._handleShaderClick(program, shader)}></TreeItem>
                   );
                 })}
               </TreeItem>
             );
           })}
         </TreeView>
-        <Shader shader={this.state.selectedShader}></Shader>
+        <Shader shader={this.state.selectedShader} program={this.state.selectedProgram}></Shader>
       </div>
     );
   }

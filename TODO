@@ -27,6 +27,7 @@ Main process:
       ☐ Do net select code initial
       ☐ Move problems panel and its items to new react component
       ☐ Handle defines, probably display not active code as greyed out
+      ☐ Search function for search in code and jump to the found entry
 
     Buffer View:
       ☐ Guess buffer view layout from gl.getAttribLocation() -> gl.vertexAttribPointer()

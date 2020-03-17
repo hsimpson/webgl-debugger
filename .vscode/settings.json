@@ -12,22 +12,8 @@
   "clang-format.language.javascript.enable": false,
   "clang-format.language.typescript.enable": false,
   "editor.formatOnSave": true,
-  "editor.minimap.enabled": false,
   "editor.tabSize": 2,
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    {
-      "autoFix": true,
-      "language": "typescript"
-    },
-    {
-      "autoFix": true,
-      "language": "typescriptreact"
-    }
-  ],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "files.associations": {
     ".clang-format": "yaml",
     ".htmlhintrc": "json",

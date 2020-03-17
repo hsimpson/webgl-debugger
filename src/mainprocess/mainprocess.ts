@@ -44,8 +44,8 @@ const createWindow = (): Promise<void> => {
     if (!mainWindow) {
       const mainWindowState = windowStateKeeper({
         file: 'webgl-debuggerwindow.json',
-        defaultWidth: 800,
-        defaultHeight: 600,
+        defaultWidth: 1024,
+        defaultHeight: 786,
       });
 
       mainWindow = new BrowserWindow({
@@ -53,6 +53,8 @@ const createWindow = (): Promise<void> => {
         y: mainWindowState.y,
         width: mainWindowState.width,
         height: mainWindowState.height,
+        minWidth: 1024,
+        minHeight: 786,
         show: false, // do not show during creation
         webPreferences: {
           defaultEncoding: 'UTF-8',
@@ -127,6 +129,7 @@ const createWindow = (): Promise<void> => {
 
           resolved();
         })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .catch((reason: any): void => {
           dialog.showErrorBox('Error', JSON.stringify(reason));
           rejected();

@@ -14,7 +14,7 @@ Main process:
 
     Styles:
       ✔ Flex Layout is not correct @done(20-01-01 02:03)
-      ☐ Set minimum with and height (e.g. 800*600)
+      ✔ Set minimum with and height (e.g. 800*600) @done(20-03-18 00:51)
 
     Shader Editor:
       ☐ Improve syntax highlighting

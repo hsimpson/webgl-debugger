@@ -123,3 +123,11 @@ export enum Constants {
   LUMINANCE = 0x1909,
   LUMINANCE_ALPHA = 0x190a,
 }
+
+export type TexImageSource =
+  | 'ImageBitmap'
+  | 'ImageData'
+  | 'HTMLImageElement'
+  | 'HTMLCanvasElement'
+  | 'HTMLVideoElement'
+  | 'OffscreenCanvas';

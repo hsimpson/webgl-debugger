@@ -1,12 +1,13 @@
 import { ipcRenderer, remote, contentTracing } from 'electron';
 import { IPCChannel, IWebGLFunc, OpaqueWebGLObjects, IShaderUpdate } from '../shared/IPC';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
-import { getImageDataFromHTMLImage, getImageDataFromCanvas } from '../shared/imageTools';
+import { getImageDataFromHTMLImage, getImageDataFromCanvas, getImageDataFromImageBitmap } from '../shared/imageTools';
 import { registerDevToolsShortCutWeb } from '../shared/toggleDevTools';
 import {
   WebGLProgramWithTag,
   WebGLUniformLocationWithTag,
   WebGLShaderWithTag,
+  TexImageSource,
 } from '../app/services/webglobjects/wglObject';
 
 const sharedObject = remote.getGlobal('sharedConfiguration') as ISharedConfiguration;
@@ -76,27 +77,34 @@ function proxyFuncAfter(funcName: string, args: any, returnValue: any): void {
 
       // special handling for textures
       if (funcObject.name === 'texImage2D') {
-        //console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
-        if (args[5].constructor.name === 'HTMLImageElement') {
+        console.log(`WebGL call #${funcObject.id}: ${funcObject.name}`, funcObject.args);
+
+        if (args.length === 6) {
+          const texImageSourceName: TexImageSource = args[5].constructor.name;
+          console.log(args[5]);
+          let imgData: ImageData = undefined;
+
+          if (texImageSourceName === 'HTMLImageElement') {
+            imgData = getImageDataFromHTMLImage(args[5]);
+          } else if (texImageSourceName === 'HTMLCanvasElement' || texImageSourceName === 'OffscreenCanvas') {
+            imgData = getImageDataFromCanvas(args[5]);
+          } else if (texImageSourceName === 'ImageBitmap') {
+            imgData = getImageDataFromImageBitmap(args[5]);
+          } else if (texImageSourceName === 'ImageData') {
+            imgData = args[5];
+          }
+
+          if (imgData) {
+            console.log(imgData.data.byteLength);
+            args[5] = {
+              data: imgData.data,
+              width: imgData.width,
+              height: imgData.height,
+            };
+          }
           //console.log(args[5]);
-          const imgData = getImageDataFromHTMLImage(args[5]);
-          //console.log(imgData.data.byteLength);
-          args[5] = {
-            data: imgData.data,
-            width: imgData.width,
-            height: imgData.height,
-          };
-          //console.log(args[5]);
-        } else if (args[5].constructor.name === 'HTMLCanvasElement') {
-          //console.log(args[5]);
-          const imgData = getImageDataFromCanvas(args[5]);
-          //console.log(imgData.data.byteLength);
-          args[5] = {
-            data: imgData.data,
-            width: imgData.width,
-            height: imgData.height,
-          };
-          //console.log(args[5]);
+        } else if (args.length === 9) {
+          console.log('texImage2D with data texture');
         }
       } else if (funcObject.name === 'createShader') {
         shaderMap.set(returnValue.tag.id, returnValue);

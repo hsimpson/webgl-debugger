@@ -4,7 +4,7 @@ import * as os from 'os';
 import { spawn } from 'child_process';
 import { BrowserWindow, Menu, app, dialog, globalShortcut, ipcMain } from 'electron';
 import { ISharedConfiguration } from '../shared/ISharedConfiguration';
-import windowStateKeeper = require('electron-window-state');
+import windowStateKeeper from 'electron-window-state';
 import {
   IPCChannel,
   IShaderValidationMessage,

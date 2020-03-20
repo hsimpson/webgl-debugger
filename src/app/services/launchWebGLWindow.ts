@@ -11,7 +11,7 @@ import {
   WGLBufferFunctions,
   WGLTextureFunctions,
 } from './webglobjects/wglObject';
-import windowStateKeeper = require('electron-window-state');
+import windowStateKeeper from 'electron-window-state';
 import { ISharedConfiguration } from '../../shared/ISharedConfiguration';
 
 export async function launchWebGLWindow(

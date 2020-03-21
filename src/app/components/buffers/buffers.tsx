@@ -7,6 +7,7 @@ import { WGLBuffer } from '../../services/webglobjects/wglBuffer';
 import { WebGLObjectsManagerSingleton } from '../../services/webglobjects/webglObjectsManager';
 import { WebGLObjectType } from '../../../shared/IPC';
 import { BufferView } from './bufferview';
+import Divider from '@material-ui/core/Divider';
 
 interface IBuffersState {
   selectedBuffer: WGLBuffer;
@@ -42,6 +43,7 @@ export class Buffers extends React.Component<{}, IBuffersState> {
             );
           })}
         </List>
+        <Divider></Divider>
         <BufferView buffer={this.state.selectedBuffer}></BufferView>
       </div>
     );

@@ -9,6 +9,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { Shader } from './shader';
 import './programs.scss';
+import Divider from '@material-ui/core/Divider';
 
 interface IProgramsState {
   selectedProgram: WGLProgram;
@@ -50,6 +51,7 @@ export class Programs extends React.Component<{}, IProgramsState> {
             );
           })}
         </TreeView>
+        <Divider></Divider>
         <Shader shader={this.state.selectedShader} program={this.state.selectedProgram}></Shader>
       </div>
     );

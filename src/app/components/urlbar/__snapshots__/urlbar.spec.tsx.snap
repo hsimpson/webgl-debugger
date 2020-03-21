@@ -33,28 +33,14 @@ exports[`UrlBar snapshot 1`] = `
       />
       <fieldset
         aria-hidden={true}
-        className="PrivateNotchedOutline-root-61 MuiOutlinedInput-notchedOutline"
-        style={
-          Object {
-            "paddingLeft": 8,
-          }
-        }
+        className="PrivateNotchedOutline-root-59 MuiOutlinedInput-notchedOutline"
       >
         <legend
-          className="PrivateNotchedOutline-legend-62"
-          style={
-            Object {
-              "width": 0,
-            }
-          }
+          className="PrivateNotchedOutline-legendLabelled-61 PrivateNotchedOutline-legendNotched-62"
         >
-          <span
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "&#8203;",
-              }
-            }
-          />
+          <span>
+            Launch URL
+          </span>
         </legend>
       </fieldset>
     </div>

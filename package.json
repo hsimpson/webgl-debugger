@@ -10,6 +10,7 @@
     "start:dev": "cross-env DEBUG=1 electron .",
     "start:prod": "cross-env electron .",
     "test": "jest --rootDir ./src",
+    "test:update-snapshot": "jest --rootDir ./src --updateSnapshot",
     "it": "jest --rootDir ./it"
   },
   "author": "Daniel Toplak <homer.simpson123@gmx.de>",

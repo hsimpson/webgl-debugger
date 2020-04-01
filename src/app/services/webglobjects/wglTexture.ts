@@ -20,6 +20,7 @@ export type TextureFormat =
 
 export type TextureType =
   | Constants.UNSIGNED_BYTE
+  | Constants.FLOAT
   | Constants.UNSIGNED_SHORT_5_6_5
   | Constants.UNSIGNED_SHORT_4_4_4_4
   | Constants.UNSIGNED_SHORT_5_5_5_1;
@@ -35,12 +36,15 @@ export class WGLTexture extends WGLObject {
   private _data: ArrayBuffer;
   private _internalFormat: TextureFormat;
 
-  public get data(): Uint8ClampedArray {
+  public get data(): Uint8ClampedArray | Float32Array {
     /*
     if (this._data.constructor.name !== 'Uint8ClampedArray') {
       return new Uint8ClampedArray(this._data.buffer);
     }
     */
+    if (this._type === Constants.FLOAT) {
+      return new Float32Array(this._data);
+    }
     return new Uint8ClampedArray(this._data);
   }
 
@@ -54,6 +58,10 @@ export class WGLTexture extends WGLObject {
 
   public get internalFormat(): TextureFormat {
     return this._internalFormat;
+  }
+
+  public get type(): TextureType {
+    return this._type;
   }
 
   public get internalFormatString(): string {

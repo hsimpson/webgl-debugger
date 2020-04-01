@@ -10,13 +10,13 @@ Main process:
   Render process:
 
     Themes:
-      ☐ Global handling of theme change: e.g. when using it as a state in shader.tsx
+      ☐ Global handling of theme change: e.g. when using it as a state in .tsx
 
     Styles:
       ✔ Flex Layout is not correct @done(20-01-01 02:03)
       ✔ Set minimum with and height (e.g. 800*600) @done(20-03-18 00:51)
 
-    Shader Editor:
+     Editor:
       ☐ Improve syntax highlighting
       ✔ Handle code change @done(20-02-20 00:42) @lasted(3h8m6s)
       ☐ Show diff when code has changed
@@ -41,6 +41,7 @@ Main process:
       ✔ Zoom Image to fit into viewport @done(20-01-07 23:58)
       ✔ Zoom control @done(20-01-14 23:24)
       ✔ Pixel cursor: which shows RGBA values (maybe in different formats: 0-255, 0.0-1.0, 0-100%) @done(20-01-11 01:29)
+      ☐ Flip/Rotate
       ☐ Support DDS format
 
       Support for texture compression formats:
@@ -49,14 +50,19 @@ Main process:
         ☐ pvrtc (not realy needed!)
 
       Support for HDR texture display:
-        ☐ Add GUI to switch (default is LDR), when texture is floating point -> switch to HDR?
-        ☐ Add exposure value
-        ☐ Add tone mapping(s) for HDR (Linear, Reinhard, ...)
+        ✔ Add GUI to switch (default is LDR), when texture is floating point -> switch to HDR? @done(20-03-21 02:56)
+        ✔ Add exposure value @done(20-03-21 02:56)
+        ✔ Add tone mapping(s) for HDR (Linear, Reinhard, None) @done(20-03-21 02:56)
 
         HDR format support:
-          ☐ RGBE (unsigned byte -> RGBE encoding, float -> linear encoding, half-float -> linear encoding)
-          ☐ RGBM/RGBD (unsigned byte -> RGBM16 encoding)
-          ☐ EXR (float/half-float)
+          ✔ RGBE (unsigned byte -> RGBE encoding, float -> linear encoding, half-float -> linear encoding) @done(20-03-21 02:55)
+          ☐ RGBM (unsigned byte -> RGBM16 encoding - only works when doing the decoding of the image)
+          ☐ RGBD (unsigned byte -> RGBM16 encoding - only works when doing the decoding of the image)
+          ✔ EXR (float/half-float) @done(20-03-27 00:40)
+
+    Texture View2 (based on WebGL):
+      ☐ Render image on a plane
+      ☐ Ortoghraphic camera zoom with mouse wheel
     
     Settings View:
       ☐ Configure action/mouse button to pan in texture view (maybe no middle mousebutton is available)
@@ -73,9 +79,9 @@ Main process:
       ✔ Support for data textures @done(20-03-18 23:51)
       ☐ Handle closing of the WebGL Window
       ✔ Handle of open/close dev tools @done(20-01-10 21:04)
-      ✔ @critical do not send WebGL objects like WebGLShader through IPC (e.g. in a call of gl.shaderSource(...)) @done(20-02-17 23:05)
+      ✔ @critical do not send WebGL objects like WebGL through IPC (e.g. in a call of gl.Source(...)) @done(20-02-17 23:05)
         - Electron 8.x changes IPC serializing to "Structured Clone" algorithm and throw deprication warning
-        - Electron 9.x throw an exception when there is a non serializable object like WebGLShader or any other opaque WebGL object
+        - Electron 9.x throw an exception when there is a non serializable object like WebGL or any other opaque WebGL object
         ✔ Also check if typed arrays are transfered correctly with the new "Structed Clone" algorithm @done(20-02-17 23:05)
       ☐ Set Favicon of website
       ☐ Support of getContext in WebWorker -> this is complicated, the preload code must be injected into the worker code

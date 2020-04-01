@@ -37,7 +37,7 @@ export class TexturesPanel extends React.Component<{}, ITexturesPanelState> {
           <PanelTitle title="Textures"></PanelTitle>
           <div className="panelContainer">
             <TextureList onSelectTexture={this.handleSelectTexture}></TextureList>
-            <div>no shader selected</div>
+            <div>no texture selected</div>
           </div>
         </div>
       );

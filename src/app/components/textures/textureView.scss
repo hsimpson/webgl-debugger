@@ -6,6 +6,22 @@
   flex-direction: column;
 }
 
+.TextureViewControls {
+  display: flex;
+  flex-direction: row;
+
+  .TextureViewControlsExposureSlider {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+    align-items: center;
+
+    .MuiTypography-root {
+      margin-right: 5px;
+    }
+  }
+}
+
 .TextureViewInfoContainer {
   display: flex;
   flex-direction: row;

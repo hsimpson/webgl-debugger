@@ -1,0 +1,33 @@
+@import '../../flexbox.scss';
+
+.TextureViewWebGL {
+  @include fullSizeContainer;
+  display: flex;
+  flex-direction: column;
+}
+
+.TextureViewWebGLControls {
+  display: flex;
+  flex-direction: row;
+
+  .TextureViewWebGLControlsExposureSlider {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+    align-items: center;
+
+    .MuiTypography-root {
+      margin-right: 5px;
+    }
+  }
+}
+
+.TextureViewWebGLCanvasContainer {
+  @include fullSizeContainer;
+}
+
+.TextureViewWebGLCanvas {
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}

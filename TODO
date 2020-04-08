@@ -60,10 +60,16 @@ Main process:
           ☐ RGBD (unsigned byte -> RGBM16 encoding - only works when doing the decoding of the image)
           ✔ EXR (float/half-float) @done(20-03-27 00:40)
 
-    Texture View2 (based on WebGL):
-      ☐ Render image on a plane
-      ☐ Ortoghraphic camera zoom with mouse wheel
-    
+    Texture View WebGL:
+      ✔ Basic implementation @done(20-04-02 00:43)
+      ✔ Render image on a plane @done(20-04-02 00:44)
+      ☐ Background texture
+      ☐ Zoom with mouse wheel
+      ☐ Panning
+      ☐ Pixel picking
+      ☐ Flip/Rotate
+      ✔ Handling of HDR(RGBE)/EXR like old TextureViewer @done(20-04-09 00:26)
+
     Settings View:
       ☐ Configure action/mouse button to pan in texture view (maybe no middle mousebutton is available)
     

@@ -4,6 +4,7 @@ import { WGLTexture } from '../../services/webglobjects/wglTexture';
 import { PanelTitle } from './panelTitle';
 import { TextureList } from '../textures/textureList';
 import { TextureView } from '../textures/textureView';
+import { TextureViewWebGL } from '../textures/textureViewWebGL';
 import Divider from '@material-ui/core/Divider';
 
 interface ITexturesPanelState {
@@ -27,7 +28,8 @@ export class TexturesPanel extends React.Component<{}, ITexturesPanelState> {
           <div className="panelContainer">
             <TextureList onSelectTexture={this.handleSelectTexture}></TextureList>
             <Divider></Divider>
-            <TextureView texture={this.state.selectedTexture}></TextureView>
+            {/*<TextureView texture={this.state.selectedTexture}></TextureView>*/}
+            {<TextureViewWebGL texture={this.state.selectedTexture}></TextureViewWebGL>}
           </div>
         </div>
       );

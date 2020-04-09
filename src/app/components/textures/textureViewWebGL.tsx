@@ -1,5 +1,5 @@
 import './textureViewWebGL.scss';
-import React, { ReactElement, useEffect, Fragment } from 'react';
+import React from 'react';
 import { WGLTexture } from '../../services/webglobjects/wglTexture';
 import { useResizeObserver } from '../../hooks/useResizeObserver';
 import * as THREE from 'three';
@@ -40,7 +40,7 @@ interface HDRState {
   toneMapping: HDRToneMapping;
 }
 
-export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => {
+export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactElement => {
   const [canvasState, setCanvasState] = React.useState<CanvasState>({
     width: 100,
     height: 100,
@@ -85,20 +85,21 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => 
     renderer.current.render(scene.current, camera.current);
   };
 
-  useEffect(() => {
-    //console.log('useEffect []');
-
+  const initThreeJS: React.EffectCallback = (): void => {
     scene.current = new THREE.Scene();
     const aspect = canvasState.width / canvasState.height;
     camera.current = new THREE.OrthographicCamera(-aspect, aspect, 1, -1, 0, 1000);
 
-    const gl = canvasEl.current.getContext('webgl2');
+    const gl = canvasEl.current.getContext('webgl2', {
+      alpha: true,
+    });
 
     renderer.current = new THREE.WebGLRenderer({
       canvas: canvasEl.current,
       context: gl as WebGLRenderingContext,
+      alpha: true,
     });
-    renderer.current.setClearColor(0x000000, 1.0);
+    renderer.current.setClearColor(0x000000, 0.0);
 
     renderer.current.setSize(canvasState.width, canvasState.height, false);
 
@@ -111,27 +112,17 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => 
     );
 
     texture.current.flipY = true;
-
-    /*/
-    // hdr testing
-    // EXR
-    texture.current.flipY = false;
-    texture.current.type = THREE.FloatType;
-    texture.current.encoding = THREE.LinearEncoding;
-
-    // all HDR
-    renderer.current.toneMappingExposure = hdrState.exposure;
-    renderer.current.outputEncoding = THREE.sRGBEncoding;
-    /**/
+    texture.current.minFilter = THREE.NearestFilter;
+    texture.current.magFilter = THREE.NearestFilter;
 
     material.current = new THREE.MeshBasicMaterial({ map: texture.current });
     const mesh = new THREE.Mesh(quad, material.current);
     scene.current.add(mesh);
 
     animate();
-  }, []); // empty array means no deps for useEffect -> called only one time
+  };
 
-  useEffect(() => {
+  const handleHDRChanges: React.EffectCallback = (): void => {
     //console.log('useEffect [hdrState]');
 
     if (hdrState.isHDRTexture) {
@@ -146,8 +137,6 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => 
           texture.current.flipY = false;
           texture.current.type = THREE.FloatType;
           texture.current.encoding = THREE.LinearEncoding;
-          texture.current.minFilter = THREE.LinearFilter;
-          texture.current.magFilter = THREE.LinearFilter;
           texture.current.generateMipmaps = false;
           break;
       }
@@ -176,7 +165,7 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => 
     }
     texture.current.needsUpdate = true;
     material.current.needsUpdate = true;
-  }, [hdrState]);
+  };
 
   const handleIsHDRChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const isHDRTexture = event.target.checked;
@@ -205,6 +194,22 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => 
     setHdrState(newState);
   };
 
+  const handleCanvasZoom = (event: React.WheelEvent<HTMLCanvasElement>): void => {
+    if (camera.current) {
+      let zoomFactor = 1.5;
+      if (event.deltaY > 0) {
+        zoomFactor = 1 / zoomFactor;
+      }
+      camera.current.zoom *= zoomFactor;
+      //console.log(camera.current.zoom);
+      camera.current.updateProjectionMatrix();
+    }
+  };
+
+  // connecting hooks
+  React.useEffect(initThreeJS, []); // empty array means no deps for useEffect -> called only one time
+  React.useEffect(handleHDRChanges, [hdrState]);
+
   return (
     <div className="TextureViewWebGL">
       <div className="TextureViewWebGLControls">
@@ -213,7 +218,7 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => 
           label="HDR?"
         />
         {hdrState.isHDRTexture && (
-          <Fragment>
+          <React.Fragment>
             <InputLabel id="hdrformat-select-label">HDR format</InputLabel>
             <Select labelId="hdrformat-select-label" value={hdrState.format} onChange={handleHDRFormatChange}>
               <MenuItem value={HDRFormat.RGBE}>RGBE</MenuItem>
@@ -246,12 +251,13 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): ReactElement => 
                   valueLabelDisplay={'auto'}></Slider>
               </div>
             )}
-          </Fragment>
+          </React.Fragment>
         )}
       </div>
       <div className="TextureViewWebGLCanvasContainer">
         <canvas
           ref={canvasEl}
+          onWheel={handleCanvasZoom}
           className="TextureViewWebGLCanvas"
           width={canvasState.width}
           height={canvasState.height}></canvas>

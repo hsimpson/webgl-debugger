@@ -63,8 +63,8 @@ Main process:
     Texture View WebGL:
       ✔ Basic implementation @done(20-04-02 00:43)
       ✔ Render image on a plane @done(20-04-02 00:44)
-      ☐ Background texture
-      ☐ Zoom with mouse wheel
+      ✔ Background texture @done(20-04-09 23:11)
+      ✔ Zoom with mouse wheel @done(20-04-09 23:11)
       ☐ Panning
       ☐ Pixel picking
       ☐ Flip/Rotate

@@ -206,6 +206,21 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
     }
   };
 
+  const handleCanvasPanning = (event: React.MouseEvent<HTMLCanvasElement>): void => {
+    if (event.buttons === 4) {
+      //console.log(`x: ${event.movementX}, y: ${event.movementY}`);
+
+      if (camera.current) {
+        const panningFactor = 0.0023 / camera.current.zoom;
+        const pos = camera.current.position;
+        pos.x -= event.movementX * panningFactor;
+        pos.y += event.movementY * panningFactor;
+        console.log(pos);
+        camera.current.position.set(pos.x, pos.y, pos.z);
+      }
+    }
+  };
+
   // connecting hooks
   React.useEffect(initThreeJS, []); // empty array means no deps for useEffect -> called only one time
   React.useEffect(handleHDRChanges, [hdrState]);
@@ -258,6 +273,7 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
         <canvas
           ref={canvasEl}
           onWheel={handleCanvasZoom}
+          onMouseMove={handleCanvasPanning}
           className="TextureViewWebGLCanvas"
           width={canvasState.width}
           height={canvasState.height}></canvas>

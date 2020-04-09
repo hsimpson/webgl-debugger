@@ -65,10 +65,11 @@ Main process:
       ✔ Render image on a plane @done(20-04-02 00:44)
       ✔ Background texture @done(20-04-09 23:11)
       ✔ Zoom with mouse wheel @done(20-04-09 23:11)
-      ☐ Panning
+      ✔ Panning @done(20-04-09 23:36)
       ☐ Pixel picking
       ☐ Flip/Rotate
       ✔ Handling of HDR(RGBE)/EXR like old TextureViewer @done(20-04-09 00:26)
+      ☐ Zoom to curso postion
 
     Settings View:
       ☐ Configure action/mouse button to pan in texture view (maybe no middle mousebutton is available)

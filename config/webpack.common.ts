@@ -57,7 +57,7 @@ const electronRendererConfig: webpack.Configuration = {
             options: {
               name: '[name].[ext]',
               outputPath: 'fonts/',
-              publicPath: (url) => '../fonts/' + url,
+              publicPath: '../fonts',
             },
           },
         ],

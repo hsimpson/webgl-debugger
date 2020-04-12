@@ -1,0 +1,14 @@
+.ColorView {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > span {
+    padding: 5px;
+  }
+}
+
+.ColorViewDisplayColor {
+  width: 25px;
+  height: 25px;
+}

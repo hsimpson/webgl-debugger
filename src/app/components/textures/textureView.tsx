@@ -404,8 +404,8 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     };
 
     let displayR: number | string = this.state.cursorR;
-    let displayB: number | string = this.state.cursorB;
-    let displayG: number | string = this.state.cursorG;
+    let displayB: number | string = this.state.cursorG;
+    let displayG: number | string = this.state.cursorB;
     let displayA: number | string = this.state.cursorA;
 
     if (this.state.cursorColorFormat === DisplayColorFormat.FloatNormalized) {

@@ -22,6 +22,16 @@
   }
 }
 
+.TextureViewWebGLInfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .TextureViewWebGLPixelPos {
+    padding: 5px;
+  }
+}
+
 .TextureViewWebGLCanvasContainer {
   @include fullSizeContainer;
 }

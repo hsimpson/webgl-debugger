@@ -10,6 +10,14 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowAltCircleLeft } from '@fortawesome/free-regular-svg-icons/faArrowAltCircleLeft';
+import { faArrowAltCircleRight } from '@fortawesome/free-regular-svg-icons/faArrowAltCircleRight';
+import { Constants } from '../../services/webglobjects/wglObject';
+import { ColorView } from '../color/colorView';
+import { Color } from '../../services/color';
 
 export interface ITextureViewWebGLProp {
   texture: WGLTexture;
@@ -28,6 +36,11 @@ enum HDRToneMapping {
   Reinhard,
 }
 
+enum Direction {
+  Left,
+  Right,
+}
+
 interface CanvasState {
   width: number;
   height: number;
@@ -38,6 +51,12 @@ interface HDRState {
   exposure: number;
   format: HDRFormat;
   toneMapping: HDRToneMapping;
+}
+
+interface PixelInfoState {
+  textureX: number;
+  textureY: number;
+  cursorColor: Color;
 }
 
 export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactElement => {
@@ -53,12 +72,22 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
     toneMapping: HDRToneMapping.Reinhard,
   });
 
+  const [pixelInfoState, setPixelInfoState] = React.useState<PixelInfoState>({
+    textureX: 0,
+    textureY: 0,
+    cursorColor: new Color(),
+  });
+
   const canvasEl = React.useRef<HTMLCanvasElement>(undefined);
   const scene = React.useRef<THREE.Scene>(undefined);
   const camera = React.useRef<THREE.OrthographicCamera>(undefined);
   const renderer = React.useRef<THREE.WebGLRenderer>(undefined);
   const texture = React.useRef<THREE.Texture>(undefined);
   const material = React.useRef<THREE.MeshBasicMaterial>(undefined);
+  const textureQuad = React.useRef<THREE.Mesh>(undefined);
+  const raycaster = React.useRef<THREE.Raycaster>(undefined);
+  const mouseNDC = React.useRef<THREE.Vector2>(new THREE.Vector2());
+  const glContext = React.useRef<WebGL2RenderingContext>(undefined);
 
   // resize handling of canvas element
   useResizeObserver(canvasEl, (rect: DOMRectReadOnly) => {
@@ -81,6 +110,7 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
 
   const animate = (): void => {
     requestAnimationFrame(animate);
+
     renderer.current.clear();
     renderer.current.render(scene.current, camera.current);
   };
@@ -90,18 +120,21 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
     const aspect = canvasState.width / canvasState.height;
     camera.current = new THREE.OrthographicCamera(-aspect, aspect, 1, -1, 0, 1000);
 
-    const gl = canvasEl.current.getContext('webgl2', {
+    glContext.current = canvasEl.current.getContext('webgl2', {
       alpha: true,
+      preserveDrawingBuffer: true,
     });
 
     renderer.current = new THREE.WebGLRenderer({
       canvas: canvasEl.current,
-      context: gl as WebGLRenderingContext,
+      context: glContext.current as WebGLRenderingContext,
       alpha: true,
     });
     renderer.current.setClearColor(0x000000, 0.0);
 
     renderer.current.setSize(canvasState.width, canvasState.height, false);
+
+    raycaster.current = new THREE.Raycaster();
 
     const quad = new THREE.PlaneBufferGeometry((1.5 * props.texture.width) / props.texture.height, 1.5);
     texture.current = new THREE.DataTexture(
@@ -116,10 +149,134 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
     texture.current.magFilter = THREE.NearestFilter;
 
     material.current = new THREE.MeshBasicMaterial({ map: texture.current });
-    const mesh = new THREE.Mesh(quad, material.current);
-    scene.current.add(mesh);
+    textureQuad.current = new THREE.Mesh(quad, material.current);
+    scene.current.add(textureQuad.current);
 
     animate();
+  };
+
+  const getPixelColorFromTexture = (x: number, y: number): Color => {
+    const pickedPixelArray = new Uint8ClampedArray(4);
+    const isRGBA = props.texture.internalFormat === Constants.RGBA;
+
+    x -= 1;
+    y -= 1;
+    // calc array offset
+    let dataOffset = props.texture.width * y + x;
+    if (isRGBA) {
+      dataOffset *= 4;
+    } else {
+      dataOffset *= 3;
+    }
+
+    pickedPixelArray[0] = props.texture.data[dataOffset];
+    pickedPixelArray[1] = props.texture.data[++dataOffset];
+    pickedPixelArray[2] = props.texture.data[++dataOffset];
+    if (isRGBA) {
+      pickedPixelArray[3] = props.texture.data[++dataOffset];
+    } else {
+      pickedPixelArray[3] = 255;
+    }
+    const color = new Color();
+    color.setFromArray(pickedPixelArray);
+    return color;
+  };
+
+  const calcHDRPixel = (pixel: Uint8ClampedArray | Float32Array): Uint8ClampedArray => {
+    let convertToLinear = false;
+    const output = new Uint8ClampedArray(4);
+    if (pixel.constructor.name.startsWith('Uint8')) {
+      convertToLinear = true;
+    }
+
+    let r = pixel[0];
+    let g = pixel[1];
+    let b = pixel[2];
+    let a = pixel[3];
+
+    if (convertToLinear) {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      a /= 255;
+    }
+
+    if (hdrState.format === HDRFormat.RGBE) {
+      const exp = Math.pow(2, a * 255 - 128.0);
+      r = r * exp;
+      g = g * exp;
+      b = b * exp;
+    } else if (hdrState.format === HDRFormat.EXR) {
+      // do nothing here ;-)
+    }
+
+    if (hdrState.toneMapping === HDRToneMapping.Linear) {
+      r = hdrState.exposure * r;
+      g = hdrState.exposure * g;
+      b = hdrState.exposure * b;
+    } else if (hdrState.toneMapping === HDRToneMapping.Reinhard) {
+      r = hdrState.exposure * r;
+      g = hdrState.exposure * g;
+      b = hdrState.exposure * b;
+
+      r = r / (1 + r);
+      g = g / (1 + g);
+      b = b / (1 + b);
+    }
+
+    // linear to sRGB
+    if (r <= 0.0031308) {
+      r = r * 12.92;
+    } else {
+      r = Math.pow(r, 0.41666) * 1.055 - 0.055;
+    }
+
+    if (g <= 0.0031308) {
+      g = g * 12.92;
+    } else {
+      g = Math.pow(g, 0.41666) * 1.055 - 0.055;
+    }
+
+    if (b <= 0.0031308) {
+      b = b * 12.92;
+    } else {
+      b = Math.pow(b, 0.41666) * 1.055 - 0.055;
+    }
+
+    // sRGB to Uint8Clamped
+    output[0] = r * 255;
+    output[1] = g * 255;
+    output[2] = b * 255;
+    output[3] = 255; // set alpha to 255
+
+    return output;
+  };
+
+  const getPixelColorFromHDRTexture = (x: number, y: number): Color => {
+    x -= 1;
+
+    let pickedPixelArray;
+    if (hdrState.format === HDRFormat.EXR) {
+      pickedPixelArray = new Float32Array(4);
+      y = props.texture.height - y; // EXR is flipped on y
+      //x = props.texture.height - x; // EXR is flipped on y
+    } else {
+      pickedPixelArray = new Uint8ClampedArray(4);
+      y -= 1;
+    }
+
+    // calc array offset
+    let dataOffset = props.texture.width * y + x;
+    dataOffset *= 4;
+
+    pickedPixelArray[0] = props.texture.data[dataOffset];
+    pickedPixelArray[1] = props.texture.data[++dataOffset];
+    pickedPixelArray[2] = props.texture.data[++dataOffset];
+    pickedPixelArray[3] = props.texture.data[++dataOffset];
+
+    const color = new Color();
+    color.setFromArray(calcHDRPixel(pickedPixelArray));
+    return color;
   };
 
   const handleHDRChanges: React.EffectCallback = (): void => {
@@ -201,23 +358,65 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
         zoomFactor = 1 / zoomFactor;
       }
       camera.current.zoom *= zoomFactor;
-      //console.log(camera.current.zoom);
       camera.current.updateProjectionMatrix();
     }
   };
 
   const handleCanvasPanning = (event: React.MouseEvent<HTMLCanvasElement>): void => {
     if (event.buttons === 4) {
-      //console.log(`x: ${event.movementX}, y: ${event.movementY}`);
-
       if (camera.current) {
         const panningFactor = 0.0023 / camera.current.zoom;
         const pos = camera.current.position;
         pos.x -= event.movementX * panningFactor;
         pos.y += event.movementY * panningFactor;
-        console.log(pos);
         camera.current.position.set(pos.x, pos.y, pos.z);
       }
+    }
+  };
+
+  const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>): void => {
+    const mouseEvent = event.nativeEvent;
+    mouseNDC.current.x = (mouseEvent.offsetX / canvasState.width) * 2 - 1;
+    mouseNDC.current.y = -(mouseEvent.offsetY / canvasState.height) * 2 + 1;
+
+    if (raycaster.current) {
+      // update the picking ray with the camera and mouse position
+      raycaster.current.setFromCamera(mouseNDC.current, camera.current);
+
+      const intersects = raycaster.current.intersectObjects(scene.current.children);
+
+      if (intersects.length) {
+        const intersect = intersects[0];
+
+        // calc pixel position
+        const textureX = Math.floor(intersect.uv.x * props.texture.width) + 1;
+        const textureY = Math.floor(props.texture.height - intersect.uv.y * props.texture.height) + 1;
+
+        let cursorColor: Color;
+        if (hdrState.isHDRTexture) {
+          cursorColor = getPixelColorFromHDRTexture(textureX, textureY);
+        } else {
+          cursorColor = getPixelColorFromTexture(textureX, textureY);
+        }
+
+        setPixelInfoState({
+          textureX,
+          textureY,
+          cursorColor,
+        });
+      }
+    }
+  };
+
+  const handleRotate = (direction: Direction): void => {
+    if (camera.current) {
+      let rotationAngel = 90;
+      if (direction === Direction.Right) {
+        rotationAngel = -90;
+      }
+      rotationAngel = THREE.MathUtils.degToRad(rotationAngel);
+      //camera.current.applyMatrix4(new THREE.Matrix4().makeRotationZ(rotationAngel));
+      textureQuad.current.rotateZ(rotationAngel);
     }
   };
 
@@ -268,12 +467,27 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
             )}
           </React.Fragment>
         )}
+        <Tooltip title={'Rotate left'}>
+          <IconButton onClick={() => handleRotate(Direction.Left)}>
+            <FontAwesomeIcon icon={faArrowAltCircleLeft}></FontAwesomeIcon>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={'Rotate right'}>
+          <IconButton onClick={() => handleRotate(Direction.Right)}>
+            <FontAwesomeIcon icon={faArrowAltCircleRight}></FontAwesomeIcon>
+          </IconButton>
+        </Tooltip>
+      </div>
+      <div className="TextureViewWebGLInfoContainer">
+        <span className="TextureViewWebGLPixelPos">{`Pixel position: (${pixelInfoState.textureX},${pixelInfoState.textureY})`}</span>
+        <ColorView color={pixelInfoState.cursorColor}></ColorView>
       </div>
       <div className="TextureViewWebGLCanvasContainer">
         <canvas
           ref={canvasEl}
           onWheel={handleCanvasZoom}
           onMouseMove={handleCanvasPanning}
+          onClick={handleCanvasClick}
           className="TextureViewWebGLCanvas"
           width={canvasState.width}
           height={canvasState.height}></canvas>

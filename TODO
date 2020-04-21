@@ -69,7 +69,7 @@ Main process:
       ✔ Pixel picking @done(20-04-13 00:38)
       ✔ Flip/Rotate @done(20-04-11 23:28)
       ✔ Handling of HDR(RGBE)/EXR like old TextureViewer @done(20-04-09 00:26)
-      ☐ Zoom to cursor postion
+      ✔ Zoom to cursor postion @done(20-04-21 22:44)
 
     Settings View:
       ☐ Configure action/mouse button to pan in texture view (maybe no middle mousebutton is available)

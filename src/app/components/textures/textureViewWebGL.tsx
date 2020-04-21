@@ -353,17 +353,41 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
 
   const handleCanvasZoom = (event: React.WheelEvent<HTMLCanvasElement>): void => {
     if (camera.current) {
+      const mouseEvent = event.nativeEvent;
+      const x = (mouseEvent.offsetX / canvasState.width) * 2 - 1;
+      const y = -(mouseEvent.offsetY / canvasState.height) * 2 + 1;
+
       let zoomFactor = 1.5;
+
       if (event.deltaY > 0) {
         zoomFactor = 1 / zoomFactor;
       }
       camera.current.zoom *= zoomFactor;
       camera.current.updateProjectionMatrix();
+
+      if (event.deltaY < 0) {
+        const moveFactor = Math.max(camera.current.zoom * zoomFactor, 1);
+        const pos = camera.current.position;
+        pos.x += x / moveFactor;
+        pos.y += y / moveFactor;
+
+        camera.current.position.set(pos.x, pos.y, pos.z);
+      }
     }
   };
 
-  const handleCanvasPanning = (event: React.MouseEvent<HTMLCanvasElement>): void => {
+  const handleCanvasDoubleClick = (): void => {
+    if (camera.current) {
+      // primary button
+      camera.current.zoom = 1;
+      camera.current.position.set(0, 0, 0);
+      camera.current.updateProjectionMatrix();
+    }
+  };
+
+  const handleCanvasMouseMove = (event: React.MouseEvent<HTMLCanvasElement>): void => {
     if (event.buttons === 4) {
+      // middle/wheel button
       if (camera.current) {
         const panningFactor = 0.0023 / camera.current.zoom;
         const pos = camera.current.position;
@@ -486,8 +510,9 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
         <canvas
           ref={canvasEl}
           onWheel={handleCanvasZoom}
-          onMouseMove={handleCanvasPanning}
+          onMouseMove={handleCanvasMouseMove}
           onClick={handleCanvasClick}
+          onDoubleClick={handleCanvasDoubleClick}
           className="TextureViewWebGLCanvas"
           width={canvasState.width}
           height={canvasState.height}></canvas>

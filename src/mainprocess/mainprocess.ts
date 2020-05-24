@@ -13,6 +13,7 @@ import {
   IShaderUpdate,
 } from '../shared/IPC';
 
+//import {session} from 'electron';
 //import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 const basePath: string = fs.realpathSync(path.join(app.getAppPath()));
@@ -33,109 +34,107 @@ const debug: boolean = process.env.DEBUG !== undefined;
 let mainWindow: BrowserWindow;
 let sharedConfiguration: ISharedConfiguration;
 
-const createWindow = (): Promise<void> => {
-  return new Promise((resolved, rejected) => {
-    /*
+const createWindow = async (): Promise<void> => {
+  /*
     protocol.interceptStringProtocol('https', (request: Electron.Request, callback): void => {
       console.log(request.headers);
     });
+  */
+
+  /*
+  const ext = await session.defaultSession.loadExtension('G:\\tmp\\unpacked');
+  console.log(ext.name);
+  */
+
+  if (!mainWindow) {
+    const mainWindowState = windowStateKeeper({
+      file: 'webgl-debuggerwindow.json',
+      defaultWidth: 1024,
+      defaultHeight: 786,
+    });
+
+    mainWindow = new BrowserWindow({
+      x: mainWindowState.x,
+      y: mainWindowState.y,
+      width: mainWindowState.width,
+      height: mainWindowState.height,
+      minWidth: 1024,
+      minHeight: 786,
+      show: false, // do not show during creation
+      webPreferences: {
+        defaultEncoding: 'UTF-8',
+        //devTools: debug,
+        nodeIntegration: true,
+        nodeIntegrationInSubFrames: true,
+        nodeIntegrationInWorker: true,
+        preload: fs.realpathSync(path.join(mainPath, '/preloadapp.js')),
+        enableRemoteModule: true,
+      },
+    });
+
+    // only activate this when https://github.com/electron/electron/issues/19468 is fixed
+    /*
+    if (debug) {
+      installExtension(REACT_DEVELOPER_TOOLS)
+        .then((name) => console.log(`Added Extension:  ${name}`))
+        .catch((err) => console.log('An error occurred: ', err));
+
+      //await installExtension(REACT_DEVELOPER_TOOLS);
+    }
     */
 
-    if (!mainWindow) {
-      const mainWindowState = windowStateKeeper({
-        file: 'webgl-debuggerwindow.json',
-        defaultWidth: 1024,
-        defaultHeight: 786,
-      });
+    // Let us register listeners on the window, so we can update the state
+    // automatically (the listeners will be removed when the window is closed)
+    // and restore the maximized or full screen state
+    mainWindowState.manage(mainWindow);
 
-      mainWindow = new BrowserWindow({
-        x: mainWindowState.x,
-        y: mainWindowState.y,
-        width: mainWindowState.width,
-        height: mainWindowState.height,
-        minWidth: 1024,
-        minHeight: 786,
-        show: false, // do not show during creation
-        webPreferences: {
-          defaultEncoding: 'UTF-8',
-          //devTools: debug,
-          nodeIntegration: true,
-          nodeIntegrationInSubFrames: true,
-          nodeIntegrationInWorker: true,
-          preload: fs.realpathSync(path.join(mainPath, '/preloadapp.js')),
-          enableRemoteModule: true,
-        },
-      });
+    // toggle menu visibility
+    // mainWindow.setMenuBarVisibility(false);
 
-      /* only activate this when https://github.com/electron/electron/issues/19468 is fixed
-      if (debug) {
-        installExtension(REACT_DEVELOPER_TOOLS)
-          .then((name) => console.log(`Added Extension:  ${name}`))
-          .catch((err) => console.log('An error occurred: ', err));
+    // remove main menu completely
+    Menu.setApplicationMenu(null);
 
-        //await installExtension(REACT_DEVELOPER_TOOLS);
+    // because we remove the main menu completely, we have to bind the default shortcuts our self
+    globalShortcut.register('CommandOrControl+Q', () => {
+      const focusedWin = BrowserWindow.getFocusedWindow();
+      if (focusedWin && focusedWin !== mainWindow) {
+        focusedWin.close();
+      } else {
+        app.quit();
       }
-      */
+    });
 
-      // Let us register listeners on the window, so we can update the state
-      // automatically (the listeners will be removed when the window is closed)
-      // and restore the maximized or full screen state
-      mainWindowState.manage(mainWindow);
-
-      // toggle menu visibility
-      // mainWindow.setMenuBarVisibility(false);
-
-      // remove main menu completely
-      Menu.setApplicationMenu(null);
-
-      // because we remove the main menu completely, we have to bind the default shortcuts our self
-      globalShortcut.register('CommandOrControl+Q', () => {
-        const focusedWin = BrowserWindow.getFocusedWindow();
-        if (focusedWin && focusedWin !== mainWindow) {
-          focusedWin.close();
-        } else {
-          app.quit();
-        }
+    if (debug) {
+      globalShortcut.register('F5', () => {
+        mainWindow.reload();
       });
-
-      if (debug) {
-        globalShortcut.register('F5', () => {
-          mainWindow.reload();
-        });
-      }
-
-      sharedConfiguration = {
-        traceWebGLFunctions: true,
-        appWindowId: mainWindow.id,
-        appBundlePath,
-        webGLWindow: null,
-      };
-
-      global['sharedConfiguration'] = sharedConfiguration;
-
-      mainWindow.setMenuBarVisibility(false);
-      mainWindow
-        .loadFile(fs.realpathSync(path.join(rendererPath, '/index.html')))
-        .then(() => {
-          if (debug) {
-            mainWindow.webContents.openDevTools();
-          }
-
-          mainWindow.on('closed', () => {
-            mainWindow = null;
-          });
-
-          mainWindow.show();
-
-          resolved();
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .catch((reason: any): void => {
-          dialog.showErrorBox('Error', JSON.stringify(reason));
-          rejected();
-        });
     }
-  });
+
+    sharedConfiguration = {
+      traceWebGLFunctions: true,
+      appWindowId: mainWindow.id,
+      appBundlePath,
+      webGLWindow: null,
+    };
+
+    global['sharedConfiguration'] = sharedConfiguration;
+
+    mainWindow.setMenuBarVisibility(false);
+    try {
+      await mainWindow.loadFile(fs.realpathSync(path.join(rendererPath, '/index.html')));
+      if (debug) {
+        mainWindow.webContents.openDevTools();
+      }
+
+      mainWindow.on('closed', () => {
+        mainWindow = null;
+      });
+
+      mainWindow.show();
+    } catch (reason) {
+      dialog.showErrorBox('Error', JSON.stringify(reason));
+    }
+  }
 };
 
 //app.removeAllListeners('ready'); // workaround for https://github.com/electron/electron/issues/19468

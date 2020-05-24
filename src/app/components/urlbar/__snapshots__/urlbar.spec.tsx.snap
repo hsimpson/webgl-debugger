@@ -33,10 +33,10 @@ exports[`UrlBar snapshot 1`] = `
       />
       <fieldset
         aria-hidden={true}
-        className="PrivateNotchedOutline-root-59 MuiOutlinedInput-notchedOutline"
+        className="PrivateNotchedOutline-root-1 MuiOutlinedInput-notchedOutline"
       >
         <legend
-          className="PrivateNotchedOutline-legendLabelled-61 PrivateNotchedOutline-legendNotched-62"
+          className="PrivateNotchedOutline-legendLabelled-3 PrivateNotchedOutline-legendNotched-4"
         >
           <span>
             Launch URL

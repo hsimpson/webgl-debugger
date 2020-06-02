@@ -16,6 +16,7 @@ interface IProgramsState {
   selectedShader: WGLShader;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class Programs extends React.Component<{}, IProgramsState> {
   public readonly state: IProgramsState = {
     selectedProgram: undefined,

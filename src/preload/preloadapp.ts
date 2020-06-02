@@ -13,7 +13,7 @@ registerDevToolsShortCutWeb();
 
 function setOSTheme(): void {
   const theme = remote.nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-  window.localStorage.osTheme = theme; // eslint-disable-line @typescript-eslint/camelcase
+  window.localStorage.osTheme = theme;
 
   //
   // Defined in index.html, so undefined when launching the app.

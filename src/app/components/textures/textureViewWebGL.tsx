@@ -345,6 +345,7 @@ export const TextureViewWebGL = (props: ITextureViewWebGLProp): React.ReactEleme
     setHdrState(newState);
   };
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const handleExposureChange = (_event: React.ChangeEvent<{}>, newValue: number | number[]): void => {
     const newState = { ...hdrState };
     newState.exposure = newValue as number;

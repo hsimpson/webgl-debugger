@@ -12,10 +12,15 @@ interface ILaunchPanelState {
   launchDisabled: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class LaunchPanel extends React.Component<{}, ILaunchPanelState> {
   public readonly state: ILaunchPanelState = {
     launchUrl: 'https://mdn.github.io/webgl-examples/tutorial/sample7/',
     //launchUrl: 'http://127.0.0.1:8080/tutorial/sample6/',
+    //launchUrl: 'https://jmswrnr.com/',
+    //launchUrl: 'https://threejs.org/examples/webgl_loader_texture_hdr.html',
+    //launchUrl: 'https://threejs.org/examples/webgl_loader_texture_rgbm.html',
+    //launchUrl: 'https://threejs.org/examples/webgl_loader_texture_exr.html',
     launchDisabled: false,
   };
 

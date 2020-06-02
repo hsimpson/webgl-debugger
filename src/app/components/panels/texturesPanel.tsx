@@ -3,7 +3,7 @@ import React from 'react';
 import { WGLTexture } from '../../services/webglobjects/wglTexture';
 import { PanelTitle } from './panelTitle';
 import { TextureList } from '../textures/textureList';
-import { TextureView } from '../textures/textureView';
+//import { TextureView } from '../textures/textureView';
 import { TextureViewWebGL } from '../textures/textureViewWebGL';
 import Divider from '@material-ui/core/Divider';
 
@@ -11,6 +11,7 @@ interface ITexturesPanelState {
   selectedTexture: WGLTexture;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class TexturesPanel extends React.Component<{}, ITexturesPanelState> {
   public readonly state: ITexturesPanelState = {
     selectedTexture: undefined,

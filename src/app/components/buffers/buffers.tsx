@@ -13,6 +13,7 @@ interface IBuffersState {
   selectedBuffer: WGLBuffer;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class Buffers extends React.Component<{}, IBuffersState> {
   public readonly state: IBuffersState = {
     selectedBuffer: undefined,

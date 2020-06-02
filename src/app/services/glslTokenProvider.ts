@@ -1,4 +1,4 @@
-/* eslint-disable no-useless-escape, @typescript-eslint/camelcase */
+/* eslint-disable no-useless-escape */
 import * as monaco from 'monaco-editor';
 
 export const glslTokenProvider = {

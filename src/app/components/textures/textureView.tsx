@@ -383,6 +383,7 @@ export class TextureView extends React.Component<ITextureViewProp, ITextureViewS
     this._draw();
   };
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   private _handleExposureChange = (_event: React.ChangeEvent<{}>, newValue: number | number[]): void => {
     this.setState({ hdrExposure: newValue as number });
 

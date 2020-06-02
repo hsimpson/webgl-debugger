@@ -9,6 +9,7 @@ interface IStatusBarState {
   items: IStatusItem[];
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class StatusBar extends React.Component<{}, IStatusBarState> {
   public readonly state: IStatusBarState = {
     items: [

@@ -11,6 +11,7 @@ interface ISettingsPanelState {
   theme: ThemeTypes;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class SettingsPanel extends React.Component<{}, ISettingsPanelState> {
   public readonly state: ISettingsPanelState = {
     theme: window.localStorage.userTheme ?? 'system',
